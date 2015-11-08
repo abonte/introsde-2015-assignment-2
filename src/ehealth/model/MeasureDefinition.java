@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 
@@ -22,8 +23,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @Entity
 @Table(name="MeasureDefinition")
-@NamedQuery(name="MeasureDefinition.findAll", query="SELECT m FROM MeasureDefinition m")
-@XmlRootElement(name="measure")
+@NamedQueries({
+	@NamedQuery(name="MeasureDefinition.findAll", query="SELECT m FROM MeasureDefinition m"),
+	@NamedQuery(name="MeasureDefinition.getMeasureDefinitionByName", query="SELECT d FROM MeasureDefinition d WHERE d.measureName = ?1 ")
+})
+@XmlRootElement(name="measureType")
+@Json(name="mesureType")
 public class MeasureDefinition implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -95,6 +100,20 @@ public class MeasureDefinition implements Serializable {
 	    LifeCoachDao.instance.closeConnections(em);
 	    return list;
 	}
+	
+	public static MeasureDefinition getMeasureDefinitionByName(String measureName) {
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+		try{
+		MeasureDefinition p = em.createNamedQuery("MeasureDefinition.getMeasureDefinitionByName", MeasureDefinition.class).setParameter(1, measureName).getSingleResult();
+		LifeCoachDao.instance.closeConnections(em);
+		return p;
+		}
+		catch(Exception e){ 	          
+            return null; 
+         } 
+	}
+	
+	
 	
 	public static MeasureDefinition saveMeasureDefinition(MeasureDefinition p) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();

@@ -121,8 +121,6 @@ public class PersonResource {
     @Path("{measureType}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public List<HealthMeasureHistory> getPersonHistory(@PathParam("measureType") String measureName) {
-    	System.out.println("///////////"+measureName);
-    	System.out.println("///////////"+id);
     	List<MeasureDefinition> list_md = MeasureDefinition.getAll();
     	MeasureDefinition md = new MeasureDefinition();
     	for (MeasureDefinition temp : list_md) {
@@ -132,10 +130,27 @@ public class PersonResource {
     	}
     	Person person = this.getPersonById(id);
     	List<HealthMeasureHistory> list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
-    	//List<HealthMeasureHistory> list_MH = HealthMeasureHistory.getAll();
-        /*if (** == null)
-            throw new RuntimeException("Get: History for person " + id + " not found");*/
+        if (list_MH == null)
+            throw new RuntimeException("Get: History for person " + id + " not found");
         return list_MH;
     }
     
+    @GET
+    @Path("{measureType}/{mid}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public String getMeasureHistoryId(@PathParam("measureType") String measureName, @PathParam("mid") int mid) {
+        return HealthMeasureHistory.getHealthMeasureHistoryById(mid).getValue();
+    }
+    
+    
+    /*
+     * <measureType>
+        <measure>Weight</measure>
+        <value>78.9</value>
+    </measureType>
+     */
+    /*@POST
+    @Path("{measureType}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Lifestatus newLifeStatus(@PathParam("measureType") String measureName) */
 }
