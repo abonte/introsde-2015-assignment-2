@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 	@NamedQuery(name="MeasureDefinition.getMeasureDefinitionByName", query="SELECT d FROM MeasureDefinition d WHERE d.measureName = ?1 ")
 })
 @XmlRootElement(name="measureType")
-@Json(name="mesureType")
+//@Json(name="mesureType")
 public class MeasureDefinition implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -112,8 +112,6 @@ public class MeasureDefinition implements Serializable {
             return null; 
          } 
 	}
-	
-	
 	
 	public static MeasureDefinition saveMeasureDefinition(MeasureDefinition p) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();

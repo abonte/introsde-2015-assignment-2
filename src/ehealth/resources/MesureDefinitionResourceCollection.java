@@ -45,7 +45,12 @@ public class MesureDefinitionResourceCollection {
     // will work only inside a Java EE application
     @PersistenceContext(unitName = "introsde-jpa",type=PersistenceContextType.TRANSACTION)
     private EntityManagerFactory entityManagerFactory;
-
+    
+    /**
+     * Request #9: GET /measureTypes should return the list of measures your model supports
+     * Returns data in JSON and XML
+     * @return list of Measure Definition
+     */
     @GET
     @Produces({MediaType.TEXT_XML,  MediaType.APPLICATION_JSON ,  MediaType.APPLICATION_XML })
     public List<MeasureDefinition> getMeasureTypes() {

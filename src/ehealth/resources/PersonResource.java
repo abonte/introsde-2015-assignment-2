@@ -46,7 +46,11 @@ public class PersonResource {
     }
 
     // Application integration
-    // Request #2
+    /**
+     * Request #2: GET /person/{id} should give all the personal information plus current measures
+     * of person identified by {id}, current measures means current health profile.
+     * @return the person corresponding to the {id}
+     */
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Person getPerson() {
@@ -67,13 +71,18 @@ public class PersonResource {
         return person;
     }
     
-    // Request #3
+    /**
+     * Request #3: PUT /person/{id} should update the personal information of the person identified by {id}
+     * (e.i., only the person's information, not the measures of the health profile)
+     * @param person
+     * @return the response to this operation: the content is not present
+     */
     @PUT
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response putPerson(Person person) {
         System.out.println("--> Updating Person... " +this.id);
         System.out.println("--> "+person.toString());
-        Person.updatePerson(person);
+        //Person.updatePerson(person);
         Response res;
         Person existing = getPersonById(this.id);
 
@@ -82,6 +91,8 @@ public class PersonResource {
         } else {
             res = Response.created(uriInfo.getAbsolutePath()).build();
             person.setIdPerson(this.id);
+            //checks if the client sent a name in order to update the person
+            //if there is no name, remain the previous name
             if (person.getName() == null){
             	person.setName(existing.getName());
             }
@@ -97,6 +108,9 @@ public class PersonResource {
         return res;
     } 
     
+    /**
+     * Request #5: DELETE /person/{id} should delete the person identified by {id} from the system
+     */
     @DELETE
     public void deletePerson() {
         Person c = getPersonById(id);
@@ -117,17 +131,20 @@ public class PersonResource {
         return person;
     }
     
+    /**
+     * Request #6: GET /person/{id}/{measureType} should return
+     * the list of values (the history) of {measureType} (e.g. weight) for person identified by {id}
+     * @param measureName
+     * @return list of HealthMeasureHistory objects
+     */
     @GET
     @Path("{measureType}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public List<HealthMeasureHistory> getPersonHistory(@PathParam("measureType") String measureName) {
-    	List<MeasureDefinition> list_md = MeasureDefinition.getAll();
-    	MeasureDefinition md = new MeasureDefinition();
-    	for (MeasureDefinition temp : list_md) {
-    		if (temp.getMeasureName().equals(measureName)){
-    			md=temp;
-    		}
-    	}
+    	//searches the measure definition associated with the name of the measure
+		MeasureDefinition md = new MeasureDefinition();
+		md = MeasureDefinition.getMeasureDefinitionByName(measureName);
+		
     	Person person = this.getPersonById(id);
     	List<HealthMeasureHistory> list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
         if (list_MH == null)
@@ -135,6 +152,13 @@ public class PersonResource {
         return list_MH;
     }
     
+    /**
+     * Request #7: GET /person/{id}/{measureType}/{mid} should return the value of {measureType} (e.g. weight)
+     * identified by {mid} for person identified by {id}
+     * @param measureName
+     * @param mid
+     * @return a string representing the value of the HealthMeasureHistory with id = {mid}
+     */
     @GET
     @Path("{measureType}/{mid}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -142,15 +166,4 @@ public class PersonResource {
         return HealthMeasureHistory.getHealthMeasureHistoryById(mid).getValue();
     }
     
-    
-    /*
-     * <measureType>
-        <measure>Weight</measure>
-        <value>78.9</value>
-    </measureType>
-     */
-    /*@POST
-    @Path("{measureType}")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Lifestatus newLifeStatus(@PathParam("measureType") String measureName) */
 }
