@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -166,4 +167,48 @@ public class PersonResource {
         return HealthMeasureHistory.getHealthMeasureHistoryById(mid).getValue();
     }
     
+    /** 
+     * Request #8: POST /person/{id}/{measureType} should save a new value for the {measureType}
+     * (e.g. weight) of person identified by {id} and archive the old value in the history
+     * @param mesureName
+     * @return the new 'lifestatus' object
+     */
+    @POST
+    @Path("{measureType}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public LifeStatus newMeasureValue(HealthMeasureHistory hmh, @PathParam("measureType") String measureName){
+    	Person person = this.getPersonById(id);
+    	
+    	//searches the measure definition associated with the name of the measure
+		MeasureDefinition md = new MeasureDefinition();
+		md = MeasureDefinition.getMeasureDefinitionByName(measureName);
+		
+		//remove actual 'lifestatus' for measureName
+		LifeStatus lf = LifeStatus.getLifeStatusByMeasureDefPerson(md,person);
+		LifeStatus.removeLifeStatus(lf);
+		
+		//save new 'lifestatus' for measureName
+		LifeStatus newlf = new LifeStatus(person, md, hmh.getValue());
+		newlf = LifeStatus.saveLifeStatus(newlf);
+		
+		//insert the new measure value in the history
+		hmh.setPerson(person);
+		hmh.setMeasureDefinition(md);
+		HealthMeasureHistory.saveHealthMeasureHistory(hmh);
+		
+    	return LifeStatus.getLifeStatusById(newlf.getIdMeasure());
+    }
+    
+    /**
+     * Request #10: PUT /person/{id}/{measureType}/{mid} should update the value for the {measureType}
+     * (e.g., weight) identified by {mid}, related to the person identified by {id}
+     */
+    
+    /*
+    @PUT
+    @Path("{measureType}/{mid}")
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response putHealthHistory(){
+    	return res;
+    }*/
 }

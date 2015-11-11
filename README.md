@@ -21,6 +21,7 @@ This repository is the solution to the [second assignment](https://sites.google.
 ### Usage
 
 TODO Requires authentcation?
+		license
 
 > Request #1: [GET /person](#get-person)  
 Request #2: [GET /person/{id}](#get-personid)   
@@ -38,22 +39,25 @@ Request #12: [GET /person?measureType={measureType}&max={max}&min={min}](#get-pe
 
 #### GET /person
 
-Response formats: XML,JSON
+Returns a list of all the people in the database.  
+Response formats: XML, JSON.
 
 Example Request
 
 ```
-http://127.0.1.1:5700/sdelab/person
+GET http://127.0.1.1:5700/sdelab/person
 ```
 
-Example Result
+Example Result  
+Code: 200 OK
 
 ```xml
 
 <people>
     <person>
         <idPerson>1</idPerson>
-        <lastname>BB</lastname>
+        <firstname>Pinco</firstname>
+        <lastname>Palla</lastname>
         <birthdate>1978-09-02T00:00:00+02:00</birthdate>
         <healthprofile>
             <measureType>
@@ -73,9 +77,41 @@ Example Result
 ```
 
 #### GET /person/{id}
-Parameters
+Returns all the personal information plus current measures of person identified by {id} (i.e., current measures means current health profile)  
+{id} identifier of the person
+
 Example Request
+
+```
+GET http://127.0.1.1:5700/sdelab/person/1
+```
+
 Example Result
+Code: 200 OK
+
+```xml
+
+<people>
+    <person>
+        <idPerson>1</idPerson>
+        <firstname>Pinco</firstname>
+        <lastname>Palla</lastname>
+        <birthdate>1978-09-02T00:00:00+02:00</birthdate>
+        <healthprofile>
+            <measureType>
+                <measure>height</measure>
+                <value>180</value>
+            </measureType>
+            <measureType>
+                <measure>weight</measure>
+                <value>86</value>
+            </measureType>
+        </healthprofile>
+    </person>
+</people>
+
+```
+
 #### PUT /person/{id}
 Parameters
 Example Request

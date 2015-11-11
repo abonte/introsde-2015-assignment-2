@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -29,7 +30,10 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @Table(name = "LifeStatus")
-@NamedQuery(name = "LifeStatus.findAll", query = "SELECT l FROM LifeStatus l")
+@NamedQueries({
+	@NamedQuery(name = "LifeStatus.findAll", query = "SELECT l FROM LifeStatus l"),
+	@NamedQuery(name="LifeStatus.findByMeasureDefPerson", query="SELECT l FROM LifeStatus l WHERE l.person = ?1 AND l.measureDefinition = ?2")
+})
 @XmlRootElement(name="lifestatus")
 public class LifeStatus implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -56,6 +60,12 @@ public class LifeStatus implements Serializable {
 	public LifeStatus() {
 	}
 	
+	public LifeStatus(Person person, MeasureDefinition md, String value) {
+		this.person = person;
+		this.measureDefinition = md;
+		this.value = value;
+	}
+
 	@XmlTransient
 	public int getIdMeasure() {
 		return this.idMeasure;
@@ -105,6 +115,13 @@ public class LifeStatus implements Serializable {
 		LifeStatus p = em.find(LifeStatus.class, lifestatusId);
 		LifeCoachDao.instance.closeConnections(em);
 		return p;
+	}
+	
+	public static LifeStatus getLifeStatusByMeasureDefPerson(MeasureDefinition md, Person p){
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+		LifeStatus ls = em.createNamedQuery("LifeStatus.findByMeasureDefPerson", LifeStatus.class).setParameter(1, p).setParameter(2, md).getSingleResult();
+		LifeCoachDao.instance.closeConnections(em);
+		return ls;
 	}
 	
 	public static List<LifeStatus> getAll() {
