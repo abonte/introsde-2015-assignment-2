@@ -21,6 +21,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -49,13 +50,29 @@ public class PersonCollectionResource {
     /**
      * Request #1: GET /person should list all the people in the database
      * Returns the list in JSON or XML format
+     * 
+     * Request #12: GET /person?measureType={measureType}&max={max}&min={min}
+     * retrieves people whose {measureType} (e.g., weight) value is in the [{min},{max}]
+     * range (if only one for the query params is provided, use only that)
+     * 
      * @return list of person
      */
     @GET
     @Produces({MediaType.TEXT_XML,  MediaType.APPLICATION_JSON ,  MediaType.APPLICATION_XML })
-    public List<Person> getPersonsBrowser() {
+    public List<Person> getPersonsBrowser(@QueryParam("measureType") String measureName, 
+    		@QueryParam("max") Double max, @QueryParam("min") Double min) {
         System.out.println("Getting list of people...");
-        List<Person> people = Person.getAll();
+        
+        List<Person> people = new ArrayList<Person>();
+        if(measureName != null && (min != null || max != null)){
+        	MeasureDefinition md = new MeasureDefinition();
+        	md = MeasureDefinition.getMeasureDefinitionByName(measureName);
+        	min = (min == null) ? 0 : min;
+        	max = (max == null) ? 300: max;
+        	people = Person.getByMeasureNameMinMax(md, min, max);
+        }else{
+        	people = Person.getAll();
+        }
         return people;
     }
     
@@ -144,7 +161,10 @@ public class PersonCollectionResource {
     		}
     		return Person.getPersonById(id_person);
     	}
-    }    
+    }
+    
+    
+    
 
     // Defines that the next path parameter after the base url is
     // treated as a parameter and passed to the PersonResources

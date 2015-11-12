@@ -163,19 +163,16 @@ public class PersonResource {
 
     	Person person = this.getPersonById(id);
     	List<HealthMeasureHistory> list_MH = new ArrayList<HealthMeasureHistory>();
+    	// TODO invertire if else
     	if(before_s == null || after_s == null){
     		list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
     	}else{
     		Calendar before = Calendar.getInstance();
-        	SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD", Locale.ROOT);
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         	before.setTime(sdf.parse(before_s));// all done
-        	// TODO sistemare questione date
         	Calendar after = Calendar.getInstance();
         	after.setTime(sdf.parse(after_s));// all done
         	Calendar today = Calendar.getInstance();
-        	System.out.println("%%%%%%%%%%%%%%"+before.getTime());
-        	System.out.println("%%%%%%%%%%%%%%"+after.getTime());
-        	System.out.println("%%%%%%%%%%%%%%"+today.getTime());
     		list_MH = HealthMeasureHistory.getByPersonMeasureDate(person, md, before, after);
     	}
     	if (list_MH == null)
