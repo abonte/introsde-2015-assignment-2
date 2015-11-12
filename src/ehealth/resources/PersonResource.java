@@ -3,7 +3,13 @@ package ehealth.resources;
 //import ehealth.model.MeasureDefinition;
 import ehealth.model.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -16,6 +22,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -135,22 +142,45 @@ public class PersonResource {
     /**
      * Request #6: GET /person/{id}/{measureType} should return
      * the list of values (the history) of {measureType} (e.g. weight) for person identified by {id}
+     * 
+     * Request #11: GET /person/{id}/{measureType}?before={beforeDate}&after={afterDate}
+     * should return the history of {measureType} (e.g., weight) for person {id}
+     * in the specified range of date
      * @param measureName
      * @return list of HealthMeasureHistory objects
+     * @throws ParseException 
      */
     @GET
     @Path("{measureType}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public List<HealthMeasureHistory> getPersonHistory(@PathParam("measureType") String measureName) {
+    public List<HealthMeasureHistory> getPersonHistory(@PathParam("measureType") String measureName, @QueryParam("before") String before_s,
+    		@QueryParam("after") String after_s) throws ParseException {
+    	
+    	// TODO midificare root element HealthmeasureHISTORIES
     	//searches the measure definition associated with the name of the measure
-		MeasureDefinition md = new MeasureDefinition();
-		md = MeasureDefinition.getMeasureDefinitionByName(measureName);
-		
+    	MeasureDefinition md = new MeasureDefinition();
+    	md = MeasureDefinition.getMeasureDefinitionByName(measureName);
+
     	Person person = this.getPersonById(id);
-    	List<HealthMeasureHistory> list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
-        if (list_MH == null)
-            throw new RuntimeException("Get: History for person " + id + " not found");
-        return list_MH;
+    	List<HealthMeasureHistory> list_MH = new ArrayList<HealthMeasureHistory>();
+    	if(before_s == null || after_s == null){
+    		list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
+    	}else{
+    		Calendar before = Calendar.getInstance();
+        	SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD", Locale.ROOT);
+        	before.setTime(sdf.parse(before_s));// all done
+        	// TODO sistemare questione date
+        	Calendar after = Calendar.getInstance();
+        	after.setTime(sdf.parse(after_s));// all done
+        	Calendar today = Calendar.getInstance();
+        	System.out.println("%%%%%%%%%%%%%%"+before.getTime());
+        	System.out.println("%%%%%%%%%%%%%%"+after.getTime());
+        	System.out.println("%%%%%%%%%%%%%%"+today.getTime());
+    		list_MH = HealthMeasureHistory.getByPersonMeasureDate(person, md, before, after);
+    	}
+    	if (list_MH == null)
+    		throw new RuntimeException("Get: History for person " + id + " not found");
+    	return list_MH;
     }
     
     /**
@@ -176,6 +206,7 @@ public class PersonResource {
     @POST
     @Path("{measureType}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public LifeStatus newMeasureValue(HealthMeasureHistory hmh, @PathParam("measureType") String measureName){
     	Person person = this.getPersonById(id);
     	
@@ -202,13 +233,22 @@ public class PersonResource {
     /**
      * Request #10: PUT /person/{id}/{measureType}/{mid} should update the value for the {measureType}
      * (e.g., weight) identified by {mid}, related to the person identified by {id}
-     */
-    
-    /*
+     */    
     @PUT
     @Path("{measureType}/{mid}")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response putHealthHistory(){
-    	return res;
-    }*/
+    public Response putHealthHistory(HealthMeasureHistory hmh,@PathParam("mid") int mid){
+    	 Response res;
+         HealthMeasureHistory existing = HealthMeasureHistory.getHealthMeasureHistoryById(mid);
+         
+         if (existing == null) {
+             res = Response.noContent().build();
+         } else {
+        	 res = Response.created(uriInfo.getAbsolutePath()).build();
+        	 existing.setValue(hmh.getValue()); //change the value
+        	 HealthMeasureHistory.updateHealthMeasureHistory(existing);
+         }
+         return res;
+     }
+    
 }

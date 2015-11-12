@@ -40,7 +40,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Table(name="HealthMeasureHistory")
 @NamedQueries({
 	@NamedQuery(name="HealthMeasureHistory.findAll", query="SELECT h FROM HealthMeasureHistory h"),
-	@NamedQuery(name="HealthMeasureHistory.findByMeasure", query="SELECT h FROM HealthMeasureHistory h WHERE h.person = ?1 AND h.measureDefinition = ?2")
+	@NamedQuery(name="HealthMeasureHistory.findByMeasure", query="SELECT h FROM HealthMeasureHistory h WHERE h.person = ?1 AND h.measureDefinition = ?2"),
+	@NamedQuery(name="HealthMeasureHistory.findByMeasureDate", query="SELECT h FROM HealthMeasureHistory h WHERE h.person = ?1 AND h.measureDefinition = ?2 "
+			+ "AND h.timestamp BETWEEN ?4 AND ?3")
 })
 @XmlType(propOrder={"idMeasureHistory", "value" , "timestamp"})
 @JsonPropertyOrder({ "mid", "value", "created"})
@@ -134,11 +136,11 @@ public class HealthMeasureHistory implements Serializable {
 	    return list;
 	}
 	
-	public static List<HealthMeasureHistory> getByPersonMeasure(Person idP, MeasureDefinition idMeasureDef) {
+	public static List<HealthMeasureHistory> getByPersonMeasure(Person p, MeasureDefinition md) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		TypedQuery<HealthMeasureHistory> query = em.createNamedQuery("HealthMeasureHistory.findByMeasure", HealthMeasureHistory.class);
-		query.setParameter(1, idP);
-		query.setParameter(2, idMeasureDef);
+		query.setParameter(1, p);
+		query.setParameter(2, md);
 		List<HealthMeasureHistory> list = query.getResultList();
 	    LifeCoachDao.instance.closeConnections(em);
 		return list;
@@ -172,5 +174,19 @@ public class HealthMeasureHistory implements Serializable {
 	    em.remove(p);
 	    tx.commit();
 	    LifeCoachDao.instance.closeConnections(em);
+	}
+
+	public static List<HealthMeasureHistory> getByPersonMeasureDate(Person person, MeasureDefinition md, Calendar before,
+			Calendar after) {
+		EntityManager em = LifeCoachDao.instance.createEntityManager();
+		TypedQuery<HealthMeasureHistory> query = em.createNamedQuery("HealthMeasureHistory.findByMeasureDate", HealthMeasureHistory.class);
+		query.setParameter(1, person);
+		query.setParameter(2, md);
+		query.setParameter(3, before.getTime());
+		query.setParameter(4, after.getTime());
+		
+		List<HealthMeasureHistory> list = query.getResultList();
+	    LifeCoachDao.instance.closeConnections(em);
+		return list;
 	}
 }
