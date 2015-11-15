@@ -58,25 +58,28 @@ public class PersonResource {
      * Request #2: GET /person/{id} should give all the personal information plus current measures
      * of person identified by {id}, current measures means current health profile.
      * @return the person corresponding to the {id}
-     */
+     */    
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Person getPerson() {
+    public Response getPerson() {
         Person person = this.getPersonById(id);
         if (person == null)
-            throw new RuntimeException("Get: Person with " + id + " not found");
-        return person;
+           return Response.status(Response.Status.NOT_FOUND)
+        		   .entity("Get: Person with " + id + " not found").build();
+        else
+           return Response.ok(person).build();
     }
 
     // for the browser
     @GET
     @Produces(MediaType.TEXT_XML)
-    public Person getPersonHTML() {
+    public Response getPersonHTML() {
         Person person = this.getPersonById(id);
         if (person == null)
-            throw new RuntimeException("Get: Person with " + id + " not found");
-        System.out.println("Returning person... " + person.getIdPerson());
-        return person;
+            return Response.status(Response.Status.NOT_FOUND)
+         		   .entity("Get: Person with " + id + " not found").build();
+         else
+            return Response.ok(person).build();
     }
     
     /**
@@ -135,7 +138,7 @@ public class PersonResource {
         //Person person = entityManager.find(Person.class, personId); 
 
         Person person = Person.getPersonById(personId);
-        System.out.println("Person: "+person.toString());
+        //System.out.println("Person: "+person.toString());
         return person;
     }
     
