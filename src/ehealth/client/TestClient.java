@@ -333,12 +333,13 @@ public class TestClient {
 		Response response = service.path("/person/"+first_person_id+"/"+measureType+"/"+measure_id).request(MediaType.APPLICATION_XML)
 	               .put(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
 		String value_after = getHealthHistoryValue();
+		
 		if(!value_after.equals(value_before)){
 			result = "OK";
 		}else{
 			result = "ERROR";
 		}
-		responseTemplate("9", "PUT", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
+		responseTemplate("10", "PUT", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
 		if(response.getStatus() == 201){
 			String xml = response.readEntity(String.class);	
 			System.out.println(xml);
@@ -353,12 +354,53 @@ public class TestClient {
 	/**
 	 * Step 3.11. Send R#11 for a measureType, before and after dates given by your fellow student (who implemented the server).
 	 * If status is 200 and there is at least one measure in the body, result is OK, else is ERROR
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 * 
 	 */
-	/*public void getPersonHistory() {
+	public void getPersonHistoryByDate() throws ParserConfigurationException, SAXException, IOException {
 		String result = null;
+		Response response = service.path("/person/"+first_person_id+"/"+measureType)
+				.queryParam("before", "2015-11-20").queryParam("after","2011-01-01")
+				.request(MediaType.APPLICATION_XML).get(Response.class);
+		String xml = response.readEntity(String.class);
+		Element rootElement = getRootElement(xml);
 		
-	}*/
+		if(response.getStatus() == 200 && rootElement.getChildNodes().getLength() > 0){
+			result = "OK";
+		}else{
+			result = "ERROR";
+		}
+		responseTemplate("11", "GET", response, "/person/"+first_person_id+"/"+measureType+"?before=2015-11-20&after=2011-01-01", MediaType.APPLICATION_XML, result);
+		System.out.println(prettyFormat(xml));
+	}
+	
+	/**
+	 * Step 3.12. Send R#12 using the same parameters as the preivious steps.
+	 * If status is 200 and there is at least one person in the body, result is OK, else is ERROR
+	 * GET /person?measureType={measureType}&max={max}&min={min}
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 */
+	public void get() throws ParserConfigurationException, SAXException, IOException {
+		String result = null;
+		Response response = service.path("/person/")
+				.queryParam("measureType", measureType).queryParam("min","0").queryParam("max", "100")
+				.request(MediaType.APPLICATION_XML).get(Response.class);
+		String xml = response.readEntity(String.class);
+		Element rootElement = getRootElement(xml);
+		
+		if(response.getStatus() == 200 && rootElement.getChildNodes().getLength() > 0){
+			result = "OK";
+		}else{
+			result = "ERROR";
+		}
+		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max=0&min=100", MediaType.APPLICATION_XML, result);
+		System.out.println(prettyFormat(xml));
+	}
+	
 	public static void main(String[] args) {
 		if (args.length == 0){
 			uriServer = "https://arcane-beach-6023.herokuapp.com/sdelab/"; //Partner
@@ -379,6 +421,8 @@ public class TestClient {
 			jerseyClient.getMeasureHistoryById(); // Step 3.8
 			jerseyClient.postMeasureValue(); //Step 3.9
 			jerseyClient.putHealthHistory(); //Step 3.10
+			jerseyClient.getPersonHistoryByDate(); //Step 3.11
+			jerseyClient.get(); //Step 3.12
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
