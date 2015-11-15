@@ -34,9 +34,9 @@ import org.xml.sax.SAXException;
 
 
 public class TestClient {
-	//public static final String uriServer = "https://arcane-beach-6023.herokuapp.com/sdelab/"; //Carlo	
-	public static final String uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //Andrea
-	
+	//public static final String uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //Andrea
+	public static String uriServer = null;
+
 	private Client client = null;
 	private WebTarget service = null;
 	private ClientConfig clientConfig = null;
@@ -275,21 +275,110 @@ public class TestClient {
 		System.out.println(xml);
 	}
 	
-	
-	public static void main(String[] args) {
-
+	/*
+	 * Step 3.9. Choose a measureType from measure_types and send the request R#6 (GET BASE_URL/person/{first_person_id}/{measureType})
+	 * and save count value (e.g. 5 measurements).
+	 * Then send R#8 (POST BASE_URL/person/{first_person_id}/{measureTypes}) with the measurement specified below.
+	 * Follow up with another R#6 as the first to check the new count value.
+	 * If it is 1 measure more - print OK, else print ERROR.
+	 * Remember, first with JSON and then with XML as content-types
+	 */
+	public void postMeasureValue() throws ParserConfigurationException, SAXException, IOException{
+		String result = null;
+		int count_before = countMeasureHistoryElement();
 		
+		String input = "<measure>"
+						+ "<value>72</value>"
+						+ "<created>2011-12-09</created>"
+					+ "</measure>";
+	
+		Response response = service.path("/person/"+first_person_id+"/"+measureType).request(MediaType.APPLICATION_XML)
+	               .post(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+			
+		int count_after = countMeasureHistoryElement();
+		if(count_after > count_before){
+			result = "OK";
+		}else{
+			result = "ERROR";
+		}
+
+		responseTemplate("8", "POST", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
+		if(response.getStatus() == 200){
+			String xml = response.readEntity(String.class);	
+			System.out.println(prettyFormat(xml));
+		}
+	}
+	
+	private int countMeasureHistoryElement() throws ParserConfigurationException, SAXException, IOException {		
+		String xml = service.path("/person/"+first_person_id+"/"+measureType).request(MediaType.APPLICATION_XML)
+				.get(Response.class).readEntity(String.class);
+		Element rootElement = getRootElement(xml);
+		return rootElement.getChildNodes().getLength();
+	}
+	
+	/**
+	 * Step 3.10. Send R#10 using the {mid} or the measure created in the previous step and updating the value at will.
+	 * Follow up with at R#6 to check that the value was updated. If it was, result is OK, else is ERROR.
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 */
+	public void putHealthHistory() throws ParserConfigurationException, SAXException, IOException {
+		String result = null;
+		String input = "<measure>"
+				+ "<value>90</value>"
+				+ "<created>2011-12-09</created>"
+			+ "</measure>";
+		String value_before = getHealthHistoryValue();
+		Response response = service.path("/person/"+first_person_id+"/"+measureType+"/"+measure_id).request(MediaType.APPLICATION_XML)
+	               .put(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		String value_after = getHealthHistoryValue();
+		if(!value_after.equals(value_before)){
+			result = "OK";
+		}else{
+			result = "ERROR";
+		}
+		responseTemplate("9", "PUT", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
+		if(response.getStatus() == 201){
+			String xml = response.readEntity(String.class);	
+			System.out.println(xml);
+		}
+	}
+	
+	private String getHealthHistoryValue() {
+		return service.path("person/"+measure_id_person+"/"+measureType+"/"+measure_id).request()
+				.accept(MediaType.APPLICATION_XML).get(Response.class).readEntity(String.class);
+	}
+	
+	/**
+	 * Step 3.11. Send R#11 for a measureType, before and after dates given by your fellow student (who implemented the server).
+	 * If status is 200 and there is at least one measure in the body, result is OK, else is ERROR
+	 * 
+	 */
+	/*public void getPersonHistory() {
+		String result = null;
+		
+	}*/
+	public static void main(String[] args) {
+		if (args.length == 0){
+			uriServer = "https://arcane-beach-6023.herokuapp.com/sdelab/"; //Partner
+		}else{		
+			uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //My server	
+		}	
 		System.out.println("Server URL : " + uriServer);
+		
 		try {
 			TestClient jerseyClient = new TestClient();
 			jerseyClient.getPeople(); //Step 3.1
-			jerseyClient.getPerson(); //Step 3.2		
-			jerseyClient.putPerson(); //Step 3.3
-			String person_id = jerseyClient.postPerson(); //Step 3.4
-			jerseyClient.deletePerson(person_id); //Step 3.5
+			//jerseyClient.getPerson(); //Step 3.2		
+			//jerseyClient.putPerson(); //Step 3.3
+			//String person_id = jerseyClient.postPerson(); //Step 3.4
+			//jerseyClient.deletePerson(person_id); //Step 3.5
 			jerseyClient.getMeasureTypes(); //Step 3.6
 			jerseyClient.getPersonHistoryByMeasureType(); // Step 3.7
 			jerseyClient.getMeasureHistoryById(); // Step 3.8
+			jerseyClient.postMeasureValue(); //Step 3.9
+			jerseyClient.putHealthHistory(); //Step 3.10
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
