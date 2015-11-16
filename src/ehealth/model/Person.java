@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 //import javax.xml.bind.annotation.XmlTransient;
 @Entity  // indicates that this class is an entity to persist in DB
@@ -43,6 +44,7 @@ public class Person implements Serializable {
     //@Column(name="username")
     //private String username;
     @Temporal(TemporalType.DATE) // defines the precision of the date attribute
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     @Column(name="birthdate")
     private Date birthdate;
     //@Column(name="email")

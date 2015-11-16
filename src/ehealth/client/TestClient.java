@@ -25,6 +25,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,10 +34,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 
 public class TestClient {
 	//public static final String uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //Andrea
 	public static String uriServer = null;
+	public static String mediaType = null;
 
 	private Client client = null;
 	private WebTarget service = null;
@@ -61,53 +66,54 @@ public class TestClient {
 	}
 	
 	/**
-	 * Step 3.1. Send R#1 (GET BASE_URL/person)
+	 * Step 3.1. Send R#1 (GET BASE_URL/person). Calculate how many people are in the response.
+	 * If more than 2, result is OK, else is ERROR (less than 3 persons).
+	 * Save into a variable id of the first person (first_person_id) and of the last person (last_person_id)
 	 * @throws IOException 
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
 	public void getPeople() throws ParserConfigurationException, SAXException, IOException{
-		Response response = service.path("person").request().accept(MediaType.APPLICATION_XML).get(Response.class);
+		String result = "ERROR";
+		String output = null;
+		Response response = service.path("person").request().accept(mediaType).get(Response.class);
 		if(response.getStatus() == 200){
-			String xml = response.readEntity(String.class);		
-			Element rootElement = getRootElement(xml);
-
-			// Calculate how many people are in the response.
-			//If more than 2, result is OK, else is ERROR (less than 3 persons)
-			String result = null;
-			if (rootElement.getElementsByTagName("person").getLength() > 2 ){
-				result = "OK";
-			} else {
-				result = "ERROR";
+			output = response.readEntity(String.class);
+			if(mediaType == MediaType.APPLICATION_XML){
+				Element rootElement = getRootElement(output);
+				if (rootElement.getElementsByTagName("person").getLength() > 2 )
+					result = "OK";
+				first_person_id = rootElement.getFirstChild().getFirstChild().getTextContent();
+				last_person_id = rootElement.getLastChild().getFirstChild().getTextContent();
+			}else if (mediaType == MediaType.APPLICATION_JSON) {
+				JSONArray json = new JSONArray(output);
+				if (json.length() > 1 )
+					result = "OK";
+				// TODO finish for json
 			}
-
-			//Save into a variable id of the first person (first_person_id) and of the last person (last_person_id)
-			first_person_id = rootElement.getFirstChild().getFirstChild().getTextContent();
-			last_person_id = rootElement.getLastChild().getFirstChild().getTextContent();
-
-			responseTemplate("1", "GET", response, "/person", MediaType.APPLICATION_XML, result);
-			System.out.print(prettyFormat(xml));
+			output = prettyFormat(output, mediaType);
 		}
+		responseTemplate("1", "GET", response, "/person", mediaType, result);
+		System.out.println(output);
 	}
+	
 	/**
 	 * Step 3.2. Send R#2 for first_person_id. If the responses for this is 200 or 202, the result is OK.
 	 */
 	public void getPerson() {
+		String result = "ERROR";
+		String output = null;
 		Response response = getPersonByid(first_person_id);
-		String xml = response.readEntity(String.class);
-		String result = null;
 		if (response.getStatus() == 200 || response.getStatus() == 202) {
+			output = prettyFormat(response.readEntity(String.class), mediaType);		
 			result = "OK";
-		}else{
-			result = "ERROR";
 		}
-		
-		responseTemplate("2", "GET", response, "/person/"+first_person_id, MediaType.APPLICATION_XML, result);
-		System.out.print(prettyFormat(xml));
+		responseTemplate("2", "GET", response, "/person/"+first_person_id, mediaType, result);
+		System.out.print(output);
 	}
 	
 	private Response getPersonByid(String person_id) {
-		return service.path("person/"+person_id).request().accept(MediaType.APPLICATION_XML).get(Response.class);
+		return service.path("person/"+person_id).request().accept(mediaType).get(Response.class);
 	}
 	
 	/**
@@ -118,7 +124,7 @@ public class TestClient {
 		String firstname = "John";
 		String input = "<person><firstname>"+firstname+"</firstname></person>";
 
-		Response response = service.path("person/"+first_person_id).request().accept(MediaType.APPLICATION_XML).put(Entity.entity(input, MediaType.APPLICATION_XML));
+		Response response = service.path("person/"+first_person_id).request().accept(mediaType).put(Entity.entity(input, MediaType.APPLICATION_XML));
 		//String xml = response.readEntity(String.class);
 		String result = null;
 		// TODO check firstname
@@ -128,7 +134,7 @@ public class TestClient {
 			result = "ERROR";
 		}
 		
-		responseTemplate("3", "PUT", response, "/person/"+first_person_id, MediaType.APPLICATION_XML, result);
+		responseTemplate("3", "PUT", response, "/person/"+first_person_id, mediaType, result);
 		//System.out.print(prettyFormat(xml));
 	}
 	
@@ -158,8 +164,8 @@ public class TestClient {
 						+ "</healthprofile>"
 						+ "</person>";
 		
-		Response response = service.path("/person").request(MediaType.APPLICATION_XML)
-	               .post(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		Response response = service.path("/person").request(mediaType)
+	               .post(Entity.entity(input, mediaType),Response.class);
 		String xml = response.readEntity(String.class);		
 		Element rootElement = getRootElement(xml);
 		String result = null;
@@ -169,8 +175,8 @@ public class TestClient {
 		} else {
 			result = "ERROR";
 		}
-		responseTemplate("4", "POST", response, "/person/", MediaType.APPLICATION_XML, result);
-		System.out.print(prettyFormat(xml));
+		responseTemplate("4", "POST", response, "/person/", mediaType, result);
+		System.out.print(prettyFormat(xml,mediaType));
 		return rootElement.getFirstChild().getTextContent();
 	}
 	
@@ -179,7 +185,7 @@ public class TestClient {
 	 * If the answer is 404, your result must be OK.
 	 */
 	public void deletePerson(String person_id) {
-		Response response = service.path("/person/"+person_id).request(MediaType.APPLICATION_XML)
+		Response response = service.path("/person/"+person_id).request(mediaType)
 	               .delete(Response.class);
 		String result = null;
 		Response responseGet = getPersonByid(person_id);
@@ -189,7 +195,7 @@ public class TestClient {
 		}else{
 			result = "ERROR";
 		}
-		responseTemplate("5", "DELETE", response, "/person/"+person_id, MediaType.APPLICATION_XML, result);
+		responseTemplate("5", "DELETE", response, "/person/"+person_id, mediaType, result);
 	}
 	
 	/**
@@ -202,7 +208,7 @@ public class TestClient {
 	 * @throws ParserConfigurationException )
 	 */
 	public void getMeasureTypes() throws ParserConfigurationException, SAXException, IOException {
-		Response response = service.path("measureTypes").request().accept(MediaType.APPLICATION_XML).get(Response.class);
+		Response response = service.path("measureTypes").request().accept(mediaType).get(Response.class);
 		String result = null;
 		String xml = response.readEntity(String.class);
 		Element rootElement = getRootElement(xml);
@@ -215,8 +221,8 @@ public class TestClient {
 		}else{
 			result = "ERROR";
 		}	
-		responseTemplate("5", "GET", response, "/measureTypes", MediaType.APPLICATION_XML, result);
-		System.out.print(prettyFormat(xml));
+		responseTemplate("5", "GET", response, "/measureTypes", mediaType, result);
+		System.out.print(prettyFormat(xml, mediaType));
 	}
 	
 	/**
@@ -235,11 +241,11 @@ public class TestClient {
 			String xml_person = "";
 			for(String temp : measure_types){
 				//System.out.println("/person/"+id+"/"+temp);
-				String xml = service.path("/person/"+id+"/"+temp).request(MediaType.APPLICATION_XML)
+				String xml = service.path("/person/"+id+"/"+temp).request(mediaType)
 						.get(Response.class).readEntity(String.class);
 				Element rootElement = getRootElement(xml);
 				if(rootElement.getChildNodes().getLength() > 0){
-					xml_person = xml_person + prettyFormat(xml);
+					xml_person = xml_person + prettyFormat(xml, mediaType);
 					measure_id = rootElement.getFirstChild().getFirstChild().getTextContent();
 					measureType = temp;
 					measure_id_person = id;
@@ -250,7 +256,7 @@ public class TestClient {
 		}
 
 		responseTemplate("6", "GET", Response.ok().build(), "/person/{"+first_person_id+","+last_person_id+"}/{"
-				+measure_types.toString()+"}", MediaType.APPLICATION_XML, result);
+				+measure_types.toString()+"}", mediaType, result);
 		System.out.println("First person, id = "+first_person_id);
 		System.out.println(xml_output.get(0));
 		System.out.println("Second person, id = "+last_person_id);
@@ -264,14 +270,14 @@ public class TestClient {
 	public void	getMeasureHistoryById() {
 		String result = null;
 		Response response = service.path("person/"+measure_id_person+"/"+measureType+"/"+measure_id).request()
-				.accept(MediaType.APPLICATION_XML).get(Response.class);
+				.accept(mediaType).get(Response.class);
 		if (response.getStatus() == 200) {
 			result = "OK";
 		}else{
 			result = "ERROR";
 		}
 		String xml = response.readEntity(String.class);
-		responseTemplate("7", "GET", response, "/person/"+measure_id_person+"/"+measureType+"/"+measure_id, MediaType.APPLICATION_XML, result);
+		responseTemplate("7", "GET", response, "/person/"+measure_id_person+"/"+measureType+"/"+measure_id, mediaType, result);
 		System.out.println(xml);
 	}
 	
@@ -292,8 +298,8 @@ public class TestClient {
 						+ "<created>2011-12-09</created>"
 					+ "</measure>";
 	
-		Response response = service.path("/person/"+first_person_id+"/"+measureType).request(MediaType.APPLICATION_XML)
-	               .post(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		Response response = service.path("/person/"+first_person_id+"/"+measureType).request(mediaType)
+	               .post(Entity.entity(input, mediaType),Response.class);
 			
 		int count_after = countMeasureHistoryElement();
 		if(count_after > count_before){
@@ -302,15 +308,15 @@ public class TestClient {
 			result = "ERROR";
 		}
 
-		responseTemplate("8", "POST", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
+		responseTemplate("8", "POST", response, "/person/"+first_person_id+"/"+measureType, mediaType, result);
 		if(response.getStatus() == 200){
 			String xml = response.readEntity(String.class);	
-			System.out.println(prettyFormat(xml));
+			System.out.println(prettyFormat(xml, mediaType));
 		}
 	}
 	
 	private int countMeasureHistoryElement() throws ParserConfigurationException, SAXException, IOException {		
-		String xml = service.path("/person/"+first_person_id+"/"+measureType).request(MediaType.APPLICATION_XML)
+		String xml = service.path("/person/"+first_person_id+"/"+measureType).request(mediaType)
 				.get(Response.class).readEntity(String.class);
 		Element rootElement = getRootElement(xml);
 		return rootElement.getChildNodes().getLength();
@@ -330,8 +336,8 @@ public class TestClient {
 				+ "<created>2011-12-09</created>"
 			+ "</measure>";
 		String value_before = getHealthHistoryValue();
-		Response response = service.path("/person/"+first_person_id+"/"+measureType+"/"+measure_id).request(MediaType.APPLICATION_XML)
-	               .put(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		Response response = service.path("/person/"+first_person_id+"/"+measureType+"/"+measure_id).request(mediaType)
+	               .put(Entity.entity(input, mediaType),Response.class);
 		String value_after = getHealthHistoryValue();
 		
 		if(!value_after.equals(value_before)){
@@ -348,7 +354,7 @@ public class TestClient {
 	
 	private String getHealthHistoryValue() {
 		return service.path("person/"+measure_id_person+"/"+measureType+"/"+measure_id).request()
-				.accept(MediaType.APPLICATION_XML).get(Response.class).readEntity(String.class);
+				.accept(mediaType).get(Response.class).readEntity(String.class);
 	}
 	
 	/**
@@ -363,7 +369,7 @@ public class TestClient {
 		String result = null;
 		Response response = service.path("/person/"+first_person_id+"/"+measureType)
 				.queryParam("before", "2015-11-20").queryParam("after","2011-01-01")
-				.request(MediaType.APPLICATION_XML).get(Response.class);
+				.request(mediaType).get(Response.class);
 		String xml = response.readEntity(String.class);
 		Element rootElement = getRootElement(xml);
 		
@@ -372,8 +378,8 @@ public class TestClient {
 		}else{
 			result = "ERROR";
 		}
-		responseTemplate("11", "GET", response, "/person/"+first_person_id+"/"+measureType+"?before=2015-11-20&after=2011-01-01", MediaType.APPLICATION_XML, result);
-		System.out.println(prettyFormat(xml));
+		responseTemplate("11", "GET", response, "/person/"+first_person_id+"/"+measureType+"?before=2015-11-20&after=2011-01-01", mediaType, result);
+		System.out.println(prettyFormat(xml,mediaType));
 	}
 	
 	/**
@@ -388,7 +394,7 @@ public class TestClient {
 		String result = null;
 		Response response = service.path("/person/")
 				.queryParam("measureType", measureType).queryParam("min","0").queryParam("max", "100")
-				.request(MediaType.APPLICATION_XML).get(Response.class);
+				.request(mediaType).get(Response.class);
 		String xml = response.readEntity(String.class);
 		Element rootElement = getRootElement(xml);
 		
@@ -397,36 +403,8 @@ public class TestClient {
 		}else{
 			result = "ERROR";
 		}
-		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max=0&min=100", MediaType.APPLICATION_XML, result);
-		System.out.println(prettyFormat(xml));
-	}
-	
-	public static void main(String[] args) {
-		if (args.length == 0){
-			uriServer = "https://arcane-beach-6023.herokuapp.com/sdelab/"; //Partner
-		}else{		
-			uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //My server	
-		}	
-		System.out.println("Server URL : " + uriServer);
-		
-		try {
-			TestClient jerseyClient = new TestClient();
-			jerseyClient.getPeople(); //Step 3.1
-			//jerseyClient.getPerson(); //Step 3.2		
-			//jerseyClient.putPerson(); //Step 3.3
-			//String person_id = jerseyClient.postPerson(); //Step 3.4
-			//jerseyClient.deletePerson(person_id); //Step 3.5
-			jerseyClient.getMeasureTypes(); //Step 3.6
-			jerseyClient.getPersonHistoryByMeasureType(); // Step 3.7
-			jerseyClient.getMeasureHistoryById(); // Step 3.8
-			jerseyClient.postMeasureValue(); //Step 3.9
-			jerseyClient.putHealthHistory(); //Step 3.10
-			jerseyClient.getPersonHistoryByDate(); //Step 3.11
-			jerseyClient.get(); //Step 3.12
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max=0&min=100", mediaType, result);
+		System.out.println(prettyFormat(xml, mediaType));
 	}
 
 	private static Element getRootElement(String xml) throws ParserConfigurationException, SAXException, IOException{
@@ -438,7 +416,7 @@ public class TestClient {
 	}
 
 	//https://stackoverflow.com/questions/139076/how-to-pretty-print-xml-from-java
-	private static String prettyFormat(String input, int indent) {
+	private static String prettyFormatXml(String input, int indent) {
 		try {
 			Source xmlInput = new StreamSource(new StringReader(input));
 			StringWriter stringWriter = new StringWriter();
@@ -454,9 +432,25 @@ public class TestClient {
 			throw new RuntimeException(e); // simple exception handling, please review it
 		}
 	}
-
-	private static String prettyFormat(String input) {
-		return prettyFormat(input, 4);
+	
+	private static JSONArray getRootJson(String jsonString){
+		JSONArray json = new JSONArray(jsonString);
+		return json;
+	}
+	
+	private static String prettyFormatJson(String jsonString) {
+		JSONObject json = new JSONObject(jsonString); // Convert text to object
+		//JSONArray json = new JSONArray(jsonString);
+		return json.toString(4); // Print it with specified indentation	
+	}
+	
+	private static String prettyFormat(String input, String media) {
+		if(media == MediaType.APPLICATION_XML)
+			return prettyFormatXml(input, 4);
+		else if (media == MediaType.APPLICATION_JSON) 
+			return prettyFormatJson(input);
+		else
+			return null;
 	}
 
 	private static URI getBaseURI(String uriServer) {
@@ -476,4 +470,43 @@ public class TestClient {
 		System.out.println("     => HTTP Status: "+ response.getStatus());
 		System.out.println(" ");
 	}
+	
+	public static void main(String[] args) {
+		if (args.length < 2)
+			System.out.println("Error: insert {myServer, partnerServer} and {xml, json}");
+			else{
+				if(args[0].equals("partnerServer"))	
+					uriServer = "https://arcane-beach-6023.herokuapp.com/sdelab/"; //Partner
+				else		
+					uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //My server
+
+				if(args[1].equals("JSON"))
+					mediaType = MediaType.APPLICATION_JSON;
+				else
+					mediaType = MediaType.APPLICATION_XML;
+
+				System.out.println("Server URL : " + uriServer);
+				System.out.println("MediaType  : " + mediaType);
+
+
+				try {
+					TestClient jerseyClient = new TestClient();
+					jerseyClient.getPeople(); //Step 3.1
+					jerseyClient.getPerson(); //Step 3.2		
+			/*jerseyClient.putPerson(); //Step 3.3
+			String person_id = jerseyClient.postPerson(); //Step 3.4
+			jerseyClient.deletePerson(person_id); //Step 3.5
+			jerseyClient.getMeasureTypes(); //Step 3.6
+			jerseyClient.getPersonHistoryByMeasureType(); // Step 3.7
+			jerseyClient.getMeasureHistoryById(); // Step 3.8
+			jerseyClient.postMeasureValue(); //Step 3.9
+			jerseyClient.putHealthHistory(); //Step 3.10
+			jerseyClient.getPersonHistoryByDate(); //Step 3.11
+			jerseyClient.get(); //Step 3.12*/
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 }
