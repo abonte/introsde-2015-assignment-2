@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 //import javax.xml.bind.annotation.XmlTransient;
 @Entity  // indicates that this class is an entity to persist in DB
@@ -56,6 +57,7 @@ public class Person implements Serializable {
     
     @XmlElementWrapper(name = "healthprofile")
     @XmlElement(name="measureType")
+    @JsonProperty("healthprofile")
     public List<LifeStatus> getLifeStatus() {
         return lifeStatus;
     }

@@ -1,5 +1,6 @@
 package ehealth.resources;
 import ehealth.model.*;
+import ehealth.wrapper.MeasureDefinitionWrapper;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -53,9 +54,11 @@ public class MesureDefinitionResourceCollection {
      */
     @GET
     @Produces({MediaType.TEXT_XML,  MediaType.APPLICATION_JSON ,  MediaType.APPLICATION_XML })
-    public List<MeasureDefinition> getMeasureTypes() {
+    public MeasureDefinitionWrapper getMeasureTypes() {
         List<MeasureDefinition> definitions = MeasureDefinition.getAll();
-        return definitions;
+        MeasureDefinitionWrapper mdw = new MeasureDefinitionWrapper();
+        mdw.setMeasureDefinition(definitions);
+        return mdw;
     }
 
 }

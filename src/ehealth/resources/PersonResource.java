@@ -2,6 +2,8 @@ package ehealth.resources;
 
 //import ehealth.model.MeasureDefinition;
 import ehealth.model.*;
+import ehealth.wrapper.MeasureDefinitionWrapper;
+import ehealth.wrapper.MeasureHistoryWrapper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -156,7 +158,7 @@ public class PersonResource {
     @GET
     @Path("{measureType}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public List<HealthMeasureHistory> getPersonHistory(@PathParam("measureType") String measureName, @QueryParam("before") String before_s,
+    public MeasureHistoryWrapper getPersonHistory(@PathParam("measureType") String measureName, @QueryParam("before") String before_s,
     		@QueryParam("after") String after_s) throws ParseException {
     	
     	// TODO midificare root element HealthmeasureHISTORIES
@@ -180,7 +182,9 @@ public class PersonResource {
     	}
     	if (list_MH == null)
     		throw new RuntimeException("Get: History for person " + id + " not found");
-    	return list_MH;
+    	MeasureHistoryWrapper mhw = new MeasureHistoryWrapper();
+    	mhw.setHealthMeasureHistory(list_MH);
+    	return mhw;
     }
     
     /**
