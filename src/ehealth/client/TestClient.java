@@ -16,6 +16,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -86,10 +87,12 @@ public class TestClient {
 				first_person_id = rootElement.getFirstChild().getFirstChild().getTextContent();
 				last_person_id = rootElement.getLastChild().getFirstChild().getTextContent();
 			}else if (mediaType == MediaType.APPLICATION_JSON) {
-				JSONArray json = new JSONArray(output);
-				if (json.length() > 1 )
+				JSONObject jsonObj = new JSONObject(output);
+				JSONArray array = jsonObj.getJSONArray("people");
+				if (array.length() > 1 )
 					result = "OK";
-				// TODO finish for json
+				first_person_id = String.valueOf(array.getJSONObject(0).getInt("idPerson"));
+				last_person_id = String.valueOf(array.getJSONObject(array.length()-1).getInt("idPerson"));
 			}
 			output = prettyFormat(output, mediaType);
 		}
@@ -119,23 +122,32 @@ public class TestClient {
 	/**
 	 * Step 3.3. Send R#3 for first_person_id changing the firstname.
 	 * If the responses has the name changed, the result is OK
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
-	public void putPerson() {
-		String firstname = "John";
-		String input = "<person><firstname>"+firstname+"</firstname></person>";
-
-		Response response = service.path("person/"+first_person_id).request().accept(mediaType).put(Entity.entity(input, MediaType.APPLICATION_XML));
-		//String xml = response.readEntity(String.class);
-		String result = null;
-		// TODO check firstname
-		if (false){
-			result = "OK";
-		} else {
-			result = "ERROR";
+	public void putPerson() throws ParserConfigurationException, SAXException, IOException {
+		String firstname = "Andrea";
+		String result = "ERROR";
+		String input = null;
+		if(mediaType == MediaType.APPLICATION_XML){
+			input = "<person><firstname>"+firstname+"</firstname></person>";
+		}else{
+			JSONObject obj = new JSONObject();
+			obj.put("firstname", firstname);
+			input = obj.toString();
 		}
+		Response response = service.path("person/"+first_person_id).request()
+				.accept(mediaType).put(Entity.entity(input, mediaType));		
+		
+		String output = service.path("person/"+first_person_id).request()
+				.accept(MediaType.APPLICATION_XML).get(Response.class).readEntity(String.class);
+		
+		Element rootElement = getRootElement(output);
+		if (rootElement.getElementsByTagName("firstname").item(0).getTextContent().equals(firstname))
+			result = "OK";
 		
 		responseTemplate("3", "PUT", response, "/person/"+first_person_id, mediaType, result);
-		//System.out.print(prettyFormat(xml));
 	}
 	
 	/**
@@ -147,37 +159,72 @@ public class TestClient {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
+	//TODO error with json, leave always application/xml
 	public String postPerson() throws ParserConfigurationException, SAXException, IOException {
-		String input = "<person>"
-						+ "<firstname>Chuck</firstname>"
-						+ "<lastname>Norris</lastname>"
-						+ "<birthdate>1945-01-01</birthdate>"
-						+ "<healthprofile>"
-						+ "    <measureType>"
-						+ "        <measure>weight</measure>"
-						+ "        <value>72.3</value>"
-						+ "   </measureType>"
-						+ "   <measureType>"
-						+ "        <measure>height</measure> "
-						+ "        <value>1.86</value>"
-						+ "   </measureType>"
-						+ "</healthprofile>"
-						+ "</person>";
-		
-		Response response = service.path("/person").request(mediaType)
-	               .post(Entity.entity(input, mediaType),Response.class);
-		String xml = response.readEntity(String.class);		
-		Element rootElement = getRootElement(xml);
-		String result = null;
-		if (rootElement.getElementsByTagName("idPerson") != null && response.getStatus() >= 200 
-				&& response.getStatus() <= 202){
-			result = "OK";
-		} else {
-			result = "ERROR";
+		String input = null;
+		String result = "ERROR";
+		String newid = null;
+		if(MediaType.APPLICATION_XML == MediaType.APPLICATION_XML){
+			input = "<person>"
+							+ "<firstname>Chuck</firstname>"
+							+ "<lastname>Norris</lastname>"
+							+ "<birthdate>1945-01-01</birthdate>"
+							+ "<healthprofile>"
+							+ "    <measureType>"
+							+ "        <measure>weight</measure>"
+							+ "        <value>72.3</value>"
+							+ "   </measureType>"
+							+ "   <measureType>"
+							+ "        <measure>height</measure> "
+							+ "        <value>1.86</value>"
+							+ "   </measureType>"
+							+ "</healthprofile>"
+							+ "</person>";
+		}else{
+			JSONObject person = new JSONObject();
+			person.put("firstname", "Chuck");
+			person.put("lastname", "Norris");
+			person.put("birthdate", "1945-01-01");
+			
+			JSONObject mt1 = new JSONObject();
+			mt1.put("measure", "weight");
+			mt1.put("value", "72.3");
+			
+			JSONObject mt2 = new JSONObject();
+			mt2.put("measure", "weight");
+			mt2.put("value", "72.3");
+			
+			JSONArray list = new JSONArray();
+			list.put(mt1);
+			list.put(mt2);
+			
+			person.put("healthprofile", list);
+			
+			input = person.toString();
 		}
-		responseTemplate("4", "POST", response, "/person/", mediaType, result);
-		System.out.print(prettyFormat(xml,mediaType));
-		return rootElement.getFirstChild().getTextContent();
+
+		Response response = service.path("/person").request(MediaType.APPLICATION_XML)
+				.post(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		String output = response.readEntity(String.class);
+		if(response.getStatus() >= 200 && response.getStatus() <= 202){
+			if(MediaType.APPLICATION_XML == MediaType.APPLICATION_XML){
+				Element rootElement = getRootElement(output);
+				if (rootElement.getElementsByTagName("idPerson") != null ){
+					result = "OK";
+					newid = rootElement.getElementsByTagName("idPerson").item(0).getTextContent();
+				}
+			}else{
+				JSONObject jsonObj = new JSONObject(output);
+				if (jsonObj.get("idPerson") != null ){
+					result = "OK";
+					newid = jsonObj.getString("idPerson");
+				}
+			}
+		}
+		
+		responseTemplate("4", "POST", response, "/person/", MediaType.APPLICATION_XML, result);
+		System.out.print(prettyFormat(output,MediaType.APPLICATION_XML));
+		return newid; 
 	}
 	
 	/**
@@ -187,14 +234,12 @@ public class TestClient {
 	public void deletePerson(String person_id) {
 		Response response = service.path("/person/"+person_id).request(mediaType)
 	               .delete(Response.class);
-		String result = null;
-		Response responseGet = getPersonByid(person_id);
+		String result = "ERROR";
 		
-		if (responseGet.getStatus() == 404) {
+		Response responseGet = getPersonByid(person_id);
+		if (responseGet.getStatus() == 404) 
 			result = "OK";
-		}else{
-			result = "ERROR";
-		}
+
 		responseTemplate("5", "DELETE", response, "/person/"+person_id, mediaType, result);
 	}
 	
@@ -208,21 +253,31 @@ public class TestClient {
 	 * @throws ParserConfigurationException )
 	 */
 	public void getMeasureTypes() throws ParserConfigurationException, SAXException, IOException {
-		Response response = service.path("measureTypes").request().accept(mediaType).get(Response.class);
-		String result = null;
-		String xml = response.readEntity(String.class);
-		Element rootElement = getRootElement(xml);
-		NodeList types = rootElement.getChildNodes(); 
-		for(int i = 0; i< types.getLength(); i++){
-			measure_types.add(types.item(i).getTextContent());
+		String result = "ERROR";
+		Response response = service.path("measureTypes").request().accept(mediaType).get(Response.class);		
+		String output = response.readEntity(String.class);
+		if(response.getStatus() == 200){
+			if(mediaType == MediaType.APPLICATION_XML){
+				Element rootElement = getRootElement(output);
+				NodeList types = rootElement.getChildNodes(); 
+				for(int i = 0; i< types.getLength(); i++){
+					measure_types.add(types.item(i).getTextContent());
+				}
+				if(types.getLength() > 2)
+					result = "OK";
+			}else{
+				JSONObject jsonObj = new JSONObject(output);
+				JSONArray jsonTypes = jsonObj.getJSONArray("measureTypes");
+				for(int i = 0; i< jsonTypes.length(); i++){
+					measure_types.add(jsonTypes.getString(i));
+				}
+				if(jsonTypes.length() > 2)
+					result = "OK";
+			}
+			output = prettyFormat(output,mediaType); 
 		}
-		if(types.getLength() > 2){
-			result = "OK";
-		}else{
-			result = "ERROR";
-		}	
 		responseTemplate("5", "GET", response, "/measureTypes", mediaType, result);
-		System.out.print(prettyFormat(xml, mediaType));
+		System.out.print(output);
 	}
 	
 	/**
@@ -236,31 +291,41 @@ public class TestClient {
 	 */
 	public void getPersonHistoryByMeasureType() throws ParserConfigurationException, SAXException, IOException {
 		String result = "ERROR";		
-		ArrayList<String> xml_output = new ArrayList<String>();	
+		ArrayList<String> output_people = new ArrayList<String>();	
 		for(String id : new String[] {first_person_id, last_person_id}){
-			String xml_person = "";
+			String output_person = "";
 			for(String temp : measure_types){
-				//System.out.println("/person/"+id+"/"+temp);
-				String xml = service.path("/person/"+id+"/"+temp).request(mediaType)
+				String output = service.path("/person/"+id+"/"+temp).request(mediaType)
 						.get(Response.class).readEntity(String.class);
-				Element rootElement = getRootElement(xml);
-				if(rootElement.getChildNodes().getLength() > 0){
-					xml_person = xml_person + prettyFormat(xml, mediaType);
-					measure_id = rootElement.getFirstChild().getFirstChild().getTextContent();
-					measureType = temp;
-					measure_id_person = id;
-					result = "OK";
+				if(mediaType == MediaType.APPLICATION_XML){
+					Element rootElement = getRootElement(output);
+					if(rootElement.getChildNodes().getLength() > 0){
+						output_person = output_person + prettyFormat(output, mediaType);
+						measure_id = rootElement.getFirstChild().getFirstChild().getTextContent();
+						measureType = temp;
+						measure_id_person = id;
+						result = "OK";
+					}
+				}else{
+					JSONArray jsonHistory = new JSONArray(output);
+					if(jsonHistory.length() > 0){
+						output_person = output_person + " \n "+temp.toUpperCase()+ " \n " + jsonHistory.toString(4);
+						measure_id = String.valueOf(jsonHistory.getJSONObject(0).getInt("mid"));
+						measureType = temp;
+						measure_id_person = id;
+						result = "OK";
+					}
 				}
 			}
-			xml_output.add(xml_person);
+			output_people.add(output_person);
 		}
 
 		responseTemplate("6", "GET", Response.ok().build(), "/person/{"+first_person_id+","+last_person_id+"}/{"
 				+measure_types.toString()+"}", mediaType, result);
 		System.out.println("First person, id = "+first_person_id);
-		System.out.println(xml_output.get(0));
+		System.out.println(output_people.get(0));
 		System.out.println("Second person, id = "+last_person_id);
-		System.out.println(xml_output.get(1));
+		System.out.println(output_people.get(1));
 	}
 	
 	/**
@@ -268,58 +333,64 @@ public class TestClient {
 	 * If the response is 200, result is OK, else is ERROR.
 	 */
 	public void	getMeasureHistoryById() {
-		String result = null;
+		String result = "ERROR";
 		Response response = service.path("person/"+measure_id_person+"/"+measureType+"/"+measure_id).request()
 				.accept(mediaType).get(Response.class);
-		if (response.getStatus() == 200) {
+		if (response.getStatus() == 200)
 			result = "OK";
-		}else{
-			result = "ERROR";
-		}
-		String xml = response.readEntity(String.class);
+		String output = response.readEntity(String.class);
 		responseTemplate("7", "GET", response, "/person/"+measure_id_person+"/"+measureType+"/"+measure_id, mediaType, result);
-		System.out.println(xml);
+		System.out.println(output);
 	}
 	
-	/*
+	/**
 	 * Step 3.9. Choose a measureType from measure_types and send the request R#6 (GET BASE_URL/person/{first_person_id}/{measureType})
 	 * and save count value (e.g. 5 measurements).
 	 * Then send R#8 (POST BASE_URL/person/{first_person_id}/{measureTypes}) with the measurement specified below.
 	 * Follow up with another R#6 as the first to check the new count value.
 	 * If it is 1 measure more - print OK, else print ERROR.
-	 * Remember, first with JSON and then with XML as content-types
 	 */
 	public void postMeasureValue() throws ParserConfigurationException, SAXException, IOException{
-		String result = null;
+		String result = "ERROR";
+		String input = null;
+		
 		int count_before = countMeasureHistoryElement();
 		
-		String input = "<measure>"
+		if(mediaType == MediaType.APPLICATION_XML){
+			input = "<measure>"
 						+ "<value>72</value>"
 						+ "<created>2011-12-09</created>"
 					+ "</measure>";
-	
+		}else{
+			JSONObject measureObj = new JSONObject();
+			measureObj.put("value", 72);
+			measureObj.put("created", "2011-12-09");
+			input = measureObj.toString();
+		}
 		Response response = service.path("/person/"+first_person_id+"/"+measureType).request(mediaType)
 	               .post(Entity.entity(input, mediaType),Response.class);
 			
 		int count_after = countMeasureHistoryElement();
-		if(count_after > count_before){
+		if(count_after > count_before)
 			result = "OK";
-		}else{
-			result = "ERROR";
-		}
 
 		responseTemplate("8", "POST", response, "/person/"+first_person_id+"/"+measureType, mediaType, result);
 		if(response.getStatus() == 200){
-			String xml = response.readEntity(String.class);	
-			System.out.println(prettyFormat(xml, mediaType));
+			String output = response.readEntity(String.class);	
+			System.out.println(prettyFormat(output, mediaType));
 		}
 	}
 	
 	private int countMeasureHistoryElement() throws ParserConfigurationException, SAXException, IOException {		
-		String xml = service.path("/person/"+first_person_id+"/"+measureType).request(mediaType)
+		String output = service.path("/person/"+first_person_id+"/"+measureType).request(mediaType)
 				.get(Response.class).readEntity(String.class);
-		Element rootElement = getRootElement(xml);
-		return rootElement.getChildNodes().getLength();
+		if(mediaType == MediaType.APPLICATION_XML){
+			Element rootElement = getRootElement(output);
+			return rootElement.getChildNodes().getLength();
+		}else{
+			JSONArray jsonArr = new JSONArray(output);
+			return jsonArr.length();
+		}
 	}
 	
 	/**
@@ -330,27 +401,31 @@ public class TestClient {
 	 * @throws ParserConfigurationException 
 	 */
 	public void putHealthHistory() throws ParserConfigurationException, SAXException, IOException {
-		String result = null;
-		String input = "<measure>"
-				+ "<value>90</value>"
-				+ "<created>2011-12-09</created>"
-			+ "</measure>";
+		String result = "ERROR";
+		String input = null;
+		if(mediaType == MediaType.APPLICATION_XML){
+			input = "<measure>"
+					+ "<value>90</value>"
+					+ "<created>2011-12-09</created>"
+					+ "</measure>";
+		}else{
+			JSONObject measureObj = new JSONObject();
+			measureObj.put("value", 90);
+			measureObj.put("created", "2011-12-09");
+			input = measureObj.toString();
+		}
 		String value_before = getHealthHistoryValue();
 		Response response = service.path("/person/"+first_person_id+"/"+measureType+"/"+measure_id).request(mediaType)
-	               .put(Entity.entity(input, mediaType),Response.class);
-		String value_after = getHealthHistoryValue();
-		
-		if(!value_after.equals(value_before)){
-			result = "OK";
-		}else{
-			result = "ERROR";
-		}
-		responseTemplate("10", "PUT", response, "/person/"+first_person_id+"/"+measureType, MediaType.APPLICATION_XML, result);
+				.put(Entity.entity(input, mediaType),Response.class);
 		if(response.getStatus() == 201){
-			String xml = response.readEntity(String.class);	
-			System.out.println(xml);
+			String value_after = getHealthHistoryValue();
+
+			if(!value_after.equals(value_before))
+				result = "OK";
 		}
+		responseTemplate("10", "PUT", response, "/person/"+first_person_id+"/"+measureType, mediaType, result);
 	}
+
 	
 	private String getHealthHistoryValue() {
 		return service.path("person/"+measure_id_person+"/"+measureType+"/"+measure_id).request()
@@ -366,20 +441,29 @@ public class TestClient {
 	 * 
 	 */
 	public void getPersonHistoryByDate() throws ParserConfigurationException, SAXException, IOException {
-		String result = null;
+		String result = "ERROR";
+		String before = "2015-11-20";
+		String after = "2011-01-01";
 		Response response = service.path("/person/"+first_person_id+"/"+measureType)
-				.queryParam("before", "2015-11-20").queryParam("after","2011-01-01")
+				.queryParam("before", before).queryParam("after", after)
 				.request(mediaType).get(Response.class);
-		String xml = response.readEntity(String.class);
-		Element rootElement = getRootElement(xml);
-		
-		if(response.getStatus() == 200 && rootElement.getChildNodes().getLength() > 0){
-			result = "OK";
-		}else{
-			result = "ERROR";
+		String output = response.readEntity(String.class);
+		if(response.getStatus() == 200){
+			int length = 0;
+			if(mediaType == MediaType.APPLICATION_XML){
+				Element rootElement = getRootElement(output);
+				length = rootElement.getChildNodes().getLength();
+				output = prettyFormat(output, mediaType);
+			}else{
+				JSONArray jsonArr = new JSONArray(output);
+				length = jsonArr.length();
+				output = jsonArr.toString(4);
+			}
+			if(length > 0)
+				result = "OK";		
 		}
 		responseTemplate("11", "GET", response, "/person/"+first_person_id+"/"+measureType+"?before=2015-11-20&after=2011-01-01", mediaType, result);
-		System.out.println(prettyFormat(xml,mediaType));
+		System.out.println(output);
 	}
 	
 	/**
@@ -390,21 +474,28 @@ public class TestClient {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
-	public void get() throws ParserConfigurationException, SAXException, IOException {
-		String result = null;
+	public void getPersonHistoryByValue() throws ParserConfigurationException, SAXException, IOException {
+		String result = "ERROR";
 		Response response = service.path("/person/")
 				.queryParam("measureType", measureType).queryParam("min","0").queryParam("max", "100")
 				.request(mediaType).get(Response.class);
-		String xml = response.readEntity(String.class);
-		Element rootElement = getRootElement(xml);
-		
-		if(response.getStatus() == 200 && rootElement.getChildNodes().getLength() > 0){
-			result = "OK";
-		}else{
-			result = "ERROR";
+		String output = response.readEntity(String.class);
+		if(response.getStatus() == 200 ){
+			int length = 0;
+			if(mediaType == MediaType.APPLICATION_XML){
+				Element rootElement = getRootElement(xml);
+				length = rootElement.getChildNodes().getLength();
+				output = prettyFormat(output, mediaType);
+			}else{
+				JSONArray jsonArr = new JSONArray(output);
+				length = jsonArr.length();
+				output = jsonArr.toString(4);
+			}
+			if(length > 0)
+				result = "OK";
 		}
 		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max=0&min=100", mediaType, result);
-		System.out.println(prettyFormat(xml, mediaType));
+		System.out.println(output);
 	}
 
 	private static Element getRootElement(String xml) throws ParserConfigurationException, SAXException, IOException{
@@ -433,14 +524,9 @@ public class TestClient {
 		}
 	}
 	
-	private static JSONArray getRootJson(String jsonString){
-		JSONArray json = new JSONArray(jsonString);
-		return json;
-	}
 	
 	private static String prettyFormatJson(String jsonString) {
 		JSONObject json = new JSONObject(jsonString); // Convert text to object
-		//JSONArray json = new JSONArray(jsonString);
 		return json.toString(4); // Print it with specified indentation	
 	}
 	
@@ -493,16 +579,16 @@ public class TestClient {
 					TestClient jerseyClient = new TestClient();
 					jerseyClient.getPeople(); //Step 3.1
 					jerseyClient.getPerson(); //Step 3.2		
-			/*jerseyClient.putPerson(); //Step 3.3
-			String person_id = jerseyClient.postPerson(); //Step 3.4
-			jerseyClient.deletePerson(person_id); //Step 3.5
-			jerseyClient.getMeasureTypes(); //Step 3.6
-			jerseyClient.getPersonHistoryByMeasureType(); // Step 3.7
-			jerseyClient.getMeasureHistoryById(); // Step 3.8
-			jerseyClient.postMeasureValue(); //Step 3.9
-			jerseyClient.putHealthHistory(); //Step 3.10
-			jerseyClient.getPersonHistoryByDate(); //Step 3.11
-			jerseyClient.get(); //Step 3.12*/
+					jerseyClient.putPerson(); //Step 3.3
+					String person_id = jerseyClient.postPerson(); //Step 3.4
+					jerseyClient.deletePerson(person_id); //Step 3.5
+					jerseyClient.getMeasureTypes(); //Step 3.6
+					jerseyClient.getPersonHistoryByMeasureType(); // Step 3.7
+					jerseyClient.getMeasureHistoryById(); // Step 3.8
+					jerseyClient.postMeasureValue(); //Step 3.9
+					jerseyClient.putHealthHistory(); //Step 3.10
+					jerseyClient.getPersonHistoryByDate(); //Step 3.11
+		/*	jerseyClient.get(); //Step 3.12*/
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

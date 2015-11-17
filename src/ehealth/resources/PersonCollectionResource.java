@@ -57,26 +57,7 @@ public class PersonCollectionResource {
      * range (if only one for the query params is provided, use only that)
      * 
      * @return list of person
-     */
-    /*@GET
-    @Produces({MediaType.TEXT_XML,  MediaType.APPLICATION_JSON ,  MediaType.APPLICATION_XML })
-    public List<Person> getPersonsBrowser(@QueryParam("measureType") String measureName, 
-    		@QueryParam("max") Double max, @QueryParam("min") Double min) {
-        System.out.println("Getting list of people...");
-        
-        List<Person> people = new ArrayList<Person>();
-        if(measureName != null && (min != null || max != null)){
-        	MeasureDefinition md = new MeasureDefinition();
-        	md = MeasureDefinition.getMeasureDefinitionByName(measureName);
-        	min = (min == null) ? 0 : min;
-        	max = (max == null) ? 300: max;
-        	people = Person.getByMeasureNameMinMax(md, min, max);
-        }else{
-        	people = Person.getAll();
-        }
-        return people;
-    }*/
-    
+     */    
     @GET
     @Produces({MediaType.TEXT_XML,  MediaType.APPLICATION_JSON ,  MediaType.APPLICATION_XML })
     public PeopleWrapper getPersonsBrowser(@QueryParam("measureType") String measureName, 
@@ -97,6 +78,7 @@ public class PersonCollectionResource {
         pw.setPeople(people);
         return pw;
     }
+    
     /**
      * returns the number of people to get the total number of records
      * @return a string representing the number of people
@@ -136,6 +118,8 @@ public class PersonCollectionResource {
     public Person newPerson(Person person) throws IOException {
     	System.out.println("Creating new person...");
     	// checks if person includes life statuses, in other words a 'healthprofile'
+    	System.out.println(person.getLastname());
+    	System.out.println(person.getLifeStatus().isEmpty());
     	if(person.getLifeStatus().isEmpty()){
     		return Person.savePerson(person);
     	}else{
