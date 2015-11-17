@@ -168,7 +168,12 @@ Only the information in the request are updated, the other remains as before.
 Accepted formats: XML, JSON.  
 Response formats: XML, JSON.
 #####Example Request
-**XML**
+
+```
+PUT http://127.0.1.1:5700/sdelab/person/1
+```
+
+**Body XML**
 ```xml
 <person>
     <firstname>Pinco</firstname>
@@ -177,7 +182,7 @@ Response formats: XML, JSON.
 </person>
 ```
 
-**JSON**
+**Body JSON**
 ```json
 {
   "firstname": "Pinco",
@@ -192,12 +197,46 @@ HTTP Status: 201
 #### POST /person
 Parameters
 #####Example Request
-**XML**
+
+```
+POST http://127.0.1.1:5700/sdelab/person/
+```
+**Body XML**
 ```xml
+<person>
+    <firstname>Pinco</firstname>
+    <lastname>Palla</lastname>
+    <birthdate>1978-09-02</birthdate>
+    <healthprofile>
+        <measureType>
+            <measure>height</measure>
+            <value>180</value>
+        </measureType>
+        <measureType>
+            <measure>weight</measure>
+            <value>86</value>
+        </measureType>
+    </healthprofile>
+</person>
 ```
 
-**JSON**
+**Body JSON**
 ```json
+{
+  "firstname": "Pinco",
+  "lastname": "Palla,
+  "birthdate": "1978-09-02",
+  "healthprofile": [
+    {
+      "value": "86",
+      "measure": "weight"
+    },
+    {
+      "value": "180",
+      "measure": "height"
+    }
+  ]
+}
 ```
 #####Example Result
 **XML**
