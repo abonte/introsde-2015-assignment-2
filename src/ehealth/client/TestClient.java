@@ -276,7 +276,7 @@ public class TestClient {
 			}
 			output = prettyFormat(output,mediaType); 
 		}
-		responseTemplate("5", "GET", response, "/measureTypes", mediaType, result);
+		responseTemplate("9", "GET", response, "/measureTypes", mediaType, result);
 		System.out.print(output);
 	}
 	
@@ -300,7 +300,7 @@ public class TestClient {
 				if(mediaType == MediaType.APPLICATION_XML){
 					Element rootElement = getRootElement(output);
 					if(rootElement.getChildNodes().getLength() > 0){
-						output_person = output_person + prettyFormat(output, mediaType);
+						output_person = output_person + " \n "+temp.toUpperCase()+ " \n " + prettyFormat(output, mediaType);
 						measure_id = rootElement.getFirstChild().getFirstChild().getTextContent();
 						measureType = temp;
 						measure_id_person = id;
@@ -483,13 +483,14 @@ public class TestClient {
 		if(response.getStatus() == 200 ){
 			int length = 0;
 			if(mediaType == MediaType.APPLICATION_XML){
-				Element rootElement = getRootElement(xml);
+				Element rootElement = getRootElement(output);
 				length = rootElement.getChildNodes().getLength();
 				output = prettyFormat(output, mediaType);
 			}else{
-				JSONArray jsonArr = new JSONArray(output);
-				length = jsonArr.length();
-				output = jsonArr.toString(4);
+				JSONObject jsonObj = new JSONObject(output);
+				JSONArray array = jsonObj.getJSONArray("people");
+				length = array.length();
+				output = array.toString(4);
 			}
 			if(length > 0)
 				result = "OK";
@@ -588,7 +589,7 @@ public class TestClient {
 					jerseyClient.postMeasureValue(); //Step 3.9
 					jerseyClient.putHealthHistory(); //Step 3.10
 					jerseyClient.getPersonHistoryByDate(); //Step 3.11
-		/*	jerseyClient.get(); //Step 3.12*/
+					jerseyClient.getPersonHistoryByValue(); //Step 3.12
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

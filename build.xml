@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!-- ================================= 
+<!-- ================================= 
     Introduction to Service Design and Engineering Laboratory
     Description: ANT build script for the session on JAXB and Dozer 
     Author: cdparra
@@ -8,217 +8,214 @@
     
     * This build file includes targets to download and install in your local project the Apache IVY jar
     * IVY is used to manage dependencies on projects (e.g., jaxb libraries, jackson libraries for json, etc.) 
-    * 
-       TO USE IVY IN YOUR PROJECTS IN ORDER TO GET MANAGE DEPENDENCIES, MAKE SURE THE FOLLOWING LINES ARE
-       IN YOUR BUILD.XML UNTILL 'IVY-END-LINE'
+    * TO USE IVY IN YOUR PROJECTS IN ORDER TO GET MANAGE DEPENDENCIES, MAKE SURE THE FOLLOWING LINES ARE
+      IN YOUR BUILD.XML UNTILL 'IVY-END-LINE'
        
-       # The target "download-ivy" and "install-ivy" will download the ivy jar and place it in the "ivy" folder
-       # 
-   -->
-   <project name="introsde-2015-assignment-2" default="install" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-   	<!-- PART 1: Ivy properties, download, installation and configuration -->
-   	<property name="ivy.install.version" value="2.4.0-rc1" />
-   	<property name="ivy.jar.dir" value="${basedir}/ivy" /> 
-   	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
-   	<!-- this targe will donwload ivy.jar if its inot in the "ivy" folder yet -->
-   	<target name="download-ivy" unless="skip.download">
-   		<mkdir dir="${ivy.jar.dir}" />
-   		<!-- download Ivy from web site so that it can be used even without any special installation -->
-   		<echo message="installing ivy..." />
-   		<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
-   	</target>
-        <!--
-			 ================================= 
-			          target: install-ivy         
-			            this target is not necessary if you put ivy.jar in your ant lib directory
-			            if you already have ivy in your ant lib, you can simply remove this
-			            target and the dependency the 'init' target has on it
-			         ================================= 
-			     -->
-			     <target name="install-ivy" depends="download-ivy" description="--> install ivy">
-            <!--
-			 try to load ivy here from local ivy dir, in case the user has not already dropped
-			              it into ant's lib dir (note that the latter copy will always take precedence).
-			              We will not fail as long as local lib dir exists (it may be empty) and
-			              ivy is in at least one of ant's lib dir or the local lib dir. 
-			          -->
-			          <path id="ivy.lib.path">
-			          	<fileset dir="${ivy.jar.dir}" includes="*.jar" />
-			          </path>
-			          <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
-			      </target>
-			      <!-- PART 2: General properties definitions -->
-			      <property name="build.dir" value="build" />
-			      <property name="src.dir" value="src" />
-			      <property name="lib.dir" value="WebContent/WEB-INF/lib" />
-			      <property name="web.dir" value="." />
-			      <property name="webcontent.dir" value="WebContent" />
-        <!-- ================================= 
-	          target: resolve downloads the dependencies to your lib folder              
-	          ================================= -->
-	          <target name="resolve" depends="install-ivy" description="--> retrieve dependencies with ivy">
-	          	<ivy:retrieve pattern="${lib.dir}/[type]s-[artifact]-[revision].[ext]" />
-	          </target>
-	          <!-- paths where ivy libraries will be downloaded, use them as classpathref in your compilation and running tasks  -->
-	          <path id="lib.path.id">
-	          	<fileset dir="${lib.dir}" />
-	          </path>
-	          <path id="run.path.id">
-	          	<path refid="lib.path.id" />
-	          	<fileset dir="${build.dir}">
-	          		<include name="*.class" />
-	          		<include name="**/*.class" />
-	          		<exclude name="**/*Test*" />
-	          	</fileset>
-	          </path>
-	          <!-- PART 3: compilation and execution targets for this session -->
-	          <target name="init" depends="install-ivy, resolve">
-	          	<echo message="Init has been called" />
-	          	<mkdir dir="${build.dir}" />
-	          	<echo message="${build.dir} has been created" />
-	          </target>
+      # The target "download-ivy" and "install-ivy" will download the ivy jar and place it in the "ivy" folder
+      # 
+  -->
 
-	          <!-- target: delete generated file and folder -->
-	          <target name="clean">
-	          	<echo message="Clean has been called" />
-	          	<delete dir="${build.dir}" />
-	          	<echo message="${build.dir} has been deleted" />
-	          	<delete dir="${src.dir}/${xjc.package}" />
-	          	<echo message="${src.dir}/${xjc.package} has been deleted" />
-	          	<delete dir="${ivy.jar.dir}" />
-	          	<echo message="${ivy.jar.dir} has been deleted" />
-	          	<delete dir="${lib.dir}"/>
-	          	<echo message="${lib.dir} has been deleted" />
-	          </target>
-	          
-	          <target name="install" depends="clean, init"> <!-- depends="clean, init" -->
-	          	<echo message="Compile target has been called" />
-	          	<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"  debug = "true">
-	          	</javac>
-	          	<copy todir="${build.dir}" overwrite="true">
-	          		<fileset dir="${src.dir}">
-	          			<include name="*.xml" />
-	          			<include name="**/*.xml" />
-	          		</fileset>
-	          	</copy>
-	          	<copy todir="${build.dir}" overwrite="true">
-	          		<fileset dir="${webcontent.dir}">
-	          			<include name="*.xml" />
-	          			<include name="**/*.xml" />
-	          		</fileset>
-	          	</copy>
-	          </target>
-	          <target name="start">
-	          	<echo message="app start ehealth.App in ${build.dir}" />
-	          	<java classname="ehealth.App" classpath="${build.dir}" fork="true">
-	          		<arg value="$JAVA_OPTS  -cp" />
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          	</java>
-	          </target>
-	          <!-- Run the JUnit Tests -->
-	          <!-- Output is XML, could also be plain-->
-	          <target name="junit">
-	          	<echo message="Run tests" />
-	          	<junit printsummary="yes" haltonfailure="no">
-	          		<!-- Project classpath, must include junit.jar -->
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          		<!-- test class -->
-	          		<batchtest>
-	          			<fileset dir="build">
-	          				<include name="**/*Test*.class" /> 
-	          			</fileset>
-	          		</batchtest>
-	          	</junit>
-	          </target>
-	          <!-- make sure you have created first the WebContent folder, including a META-INF folder, WEB-INF/web.xml file and WEB-INF/lib folder -->
-	          <target name="create.war" depends="install">
-	          	<war destfile="sdelab06.war" webxml="${web.dir}/WebContent/WEB-INF/web.xml">
-	          		<fileset dir="${web.dir}/WebContent">
-	          			<include name="**/*.*" />
-	          		</fileset>
-	          		<classes dir="${build.dir}" />
-	          	</war>
-	          </target>
-	          
+  <project name="introsde-2015-assignment-2" default="install" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	          <target name="execute.client.myServer.xml">	
-	          	<echo message="'execute.client' target has been called"/>  		
-	          	<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
-	          		<arg value="myServer"/>
-	          		<arg value="XML"/>
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          	</java>
-	          	
-	          </target>
-	          
-	          <target name="execute.client.partnerServer.xml">
-	          	<record name="client-server-xml.log" action="start" append="no"/>
-	          	<echo message="'execute.client' target has been called"/>
-	          	<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
-	          		<arg value="partnerServer"/>
-	          		<arg value="XML"/>
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          	</java>
-	          	<record name="client-server-xml.log" action="stop"/>
-	          	<echo message="Created the file client-server-xml.log containing the output of the execute.client target" />
-	          </target>
-	          
-	          <target name="execute.client.myServer.json">	
-	          	<echo message="'execute.client' target has been called"/>  		
-	          	<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
-	          		<arg value="myServer"/>
-	          		<arg value="JSON"/>
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          	</java>
-	          	
-	          </target>
-	          
-	          <target name="execute.client.partnerServer.json">
-	          	<record name="client-server-json.log" action="start" append="no"/>
-	          	<echo message="'execute.client' target has been called"/>
-	          	<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
-	          		<arg value="partnerServer"/>
-	          		<arg value="JSON"/>
-	          		<classpath>
-	          			<path location="build" />
-	          			<fileset dir="WebContent/WEB-INF/lib">
-	          				<include name="**/*.jar" />
-	          				<include name="*.jar" />
-	          			</fileset>
-	          		</classpath>
-	          	</java>
-	          	<record name="client-server-json.log" action="stop"/>
-	          	<echo message="Created the file client-server-json.log containing the output of the execute.client target" />
-	          </target>
-	          
-	      </project>
+  	<!-- PART 1: Ivy properties, download, installation and configuration -->
+  	<property name="ivy.install.version" value="2.4.0-rc1" />
+  	<property name="ivy.jar.dir" value="${basedir}/ivy" /> 
+  	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+  	<!-- this targe will donwload ivy.jar if its inot in the "ivy" folder yet -->
+  	<target name="download-ivy" unless="skip.download">
+  		<mkdir dir="${ivy.jar.dir}" />
+  		<!-- download Ivy from web site so that it can be used even without any special installation -->
+  		<echo message="installing ivy..." />
+  		<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
+  	</target>
+    <!--================================= 
+	target: install-ivy         
+	this target is not necessary if you put ivy.jar in your ant lib directory
+	if you already have ivy in your ant lib, you can simply remove this
+	target and the dependency the 'init' target has on it
+	================================= -->
+
+	<target name="install-ivy" depends="download-ivy" description="--> install ivy">
+        <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+			 it into ant's lib dir (note that the latter copy will always take precedence).
+			 We will not fail as long as local lib dir exists (it may be empty) and
+			 ivy is in at least one of ant's lib dir or the local lib dir. -->
+			 <path id="ivy.lib.path">
+			 	<fileset dir="${ivy.jar.dir}" includes="*.jar" />
+			 </path>
+			 <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+			</target>
+
+			<!-- PART 2: General properties definitions -->
+			<property name="build.dir" value="build" />
+			<property name="src.dir" value="src" />
+			<property name="lib.dir" value="WebContent/WEB-INF/lib" />
+			<property name="web.dir" value="." />
+			<property name="webcontent.dir" value="WebContent" />
+
+    <!-- ================================= 
+	target: resolve downloads the dependencies to your lib folder              
+	================================= -->
+	<target name="resolve" depends="install-ivy" description="--> retrieve dependencies with ivy">
+		<ivy:retrieve pattern="${lib.dir}/[type]s-[artifact]-[revision].[ext]" />
+	</target>
+	<!-- paths where ivy libraries will be downloaded, use them as classpathref in your compilation and running tasks  -->
+	<path id="lib.path.id">
+		<fileset dir="${lib.dir}" />
+	</path>
+	<path id="run.path.id">
+		<path refid="lib.path.id" />
+		<fileset dir="${build.dir}">
+			<include name="*.class" />
+			<include name="**/*.class" />
+			<exclude name="**/*Test*" />
+		</fileset>
+	</path>
+
+	<!-- PART 3: compilation and execution targets for this session -->
+	<target name="init" depends="install-ivy, resolve">
+		<echo message="Init has been called" />
+		<mkdir dir="${build.dir}" />
+		<echo message="${build.dir} has been created" />
+	</target>
+
+	<!-- target: delete generated file and folder -->
+	<target name="clean">
+		<echo message="Clean has been called" />
+		<delete dir="${build.dir}" />
+		<echo message="${build.dir} has been deleted" />
+		<delete dir="${src.dir}/${xjc.package}" />
+		<echo message="${src.dir}/${xjc.package} has been deleted" />
+		<delete dir="${ivy.jar.dir}" />
+		<echo message="${ivy.jar.dir} has been deleted" />
+		<delete dir="${lib.dir}"/>
+		<echo message="${lib.dir} has been deleted" />
+	</target>
+
+	<target name="install" depends="clean, init" >
+		<echo message="Compile target has been called" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"  debug = "true">
+		</javac>
+		<copy todir="${build.dir}" overwrite="true">
+			<fileset dir="${src.dir}">
+				<include name="*.xml" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${build.dir}" overwrite="true">
+			<fileset dir="${webcontent.dir}">
+				<include name="*.xml" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="start">
+		<echo message="app start ehealth.App in ${build.dir}" />
+		<java classname="ehealth.App" classpath="${build.dir}" fork="true">
+			<arg value="$JAVA_OPTS  -cp" />
+			<classpath>
+				<path location="build" />
+				<fileset dir="WebContent/WEB-INF/lib">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- make sure you have created first the WebContent folder, including a META-INF folder, WEB-INF/web.xml file and WEB-INF/lib folder -->
+	<target name="create.war" depends="install">
+		<war destfile="sdelab06.war" webxml="${web.dir}/WebContent/WEB-INF/web.xml">
+			<fileset dir="${web.dir}/WebContent">
+				<include name="**/*.*" />
+			</fileset>
+			<classes dir="${build.dir}" />
+		</war>
+	</target>
+
+	<target name="execute.client" depends="install">
+		<echo message="'execute.client' target has been called"/>
+		<antcall target="execute.client.partnerServer.xml"/>
+		<antcall target="execute.client.partnerServer.json"/>
+	</target>
+
+	<target name="execute.client.myServer" depends="install">
+		<echo message="'execute.client.myServer' target has been called"/>
+		<antcall target="execute.client.myServer.xml"/>
+		<antcall target="execute.client.myServer.json"/>
+	</target>
+
+	<target name="execute.client.myServer.xml">
+		<record name="client-MyServer-xml.log" action="start" append="no"/>	
+		<echo message="'execute.client.myServer.xml' target has been called"/>  		
+		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+			<arg value="myServer"/>
+			<arg value="XML"/>
+			<classpath>
+				<path location="build" />
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+		<record name="client-MyServer-xml.log" action="stop"/>
+		<echo message="Created the file client-MyServer-xml.log containing the output of the execute.client.myServer.json target" />
+	</target>
+
+	<target name="execute.client.partnerServer.xml">
+		<record name="client-server-xml.log" action="start" append="no"/>
+		<echo message="'execute.client.partnerServer.xml' target has been called"/>
+		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+			<arg value="partnerServer"/>
+			<arg value="XML"/>
+			<classpath>
+				<path location="build" />
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+		<record name="client-server-xml.log" action="stop"/>
+		<echo message="Created the file client-server-xml.log containing the output of the execute.client target" />
+	</target>
+
+	<target name="execute.client.myServer.json">
+		<record name="client-MyServer-json.log" action="start" append="no"/>	
+		<echo message="'execute.client.myServer.json' target has been called"/>  		
+		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+			<arg value="myServer"/>
+			<arg value="JSON"/>
+			<classpath>
+				<path location="build" />
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+		<record name="client-MyServer-json.log" action="stop"/>
+		<echo message="Created the file client-MyServer-json.log containing the output of the execute.client.myServer.json target" />
+	</target>
+
+	<target name="execute.client.partnerServer.json">
+		<record name="client-server-json.log" action="start" append="no"/>
+		<echo message="'execute.client.partnerServer.json' target has been called"/>
+		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+			<arg value="partnerServer"/>
+			<arg value="JSON"/>
+			<classpath>
+				<path location="build" />
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+		<record name="client-server-json.log" action="stop"/>
+		<echo message="Created the file client-server-json.log containing the output of the execute.client target" />
+	</target>
+
+</project>
