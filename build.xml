@@ -91,7 +91,7 @@
 	          	<echo message="${lib.dir} has been deleted" />
 	          </target>
 	          
-	          <target name="install"> <!-- depends="clean, init" -->
+	          <target name="install" depends="clean, init"> <!-- depends="clean, init" -->
 	          	<echo message="Compile target has been called" />
 	          	<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"  debug = "true">
 	          	</javac>
