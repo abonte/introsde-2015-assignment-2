@@ -53,16 +53,18 @@ This command performs the following action:
 * create a build directory and compile the code in the src folder. You can find the compiled code in *build* folder;
 * call others target defined in the build file:
     * `execute.client.partnerServer.xml` send REST queries to the partner server with the body in XML format and accept response in XML. The output is saved into [client-server-xml.log](client-server-xml.log);
-    * `execute.client.partnerServer.json`send REST queries to the partner server with the body in JSON format and accept response in JSON. The output is saved into [client-server-json.log](client-server-json.log).
+    * `execute.client.partnerServer.json` send REST queries to the partner server with the body in JSON format and accept response in JSON. The output is saved into [client-server-json.log](client-server-json.log).
 
 
 You can also send queries to my server:
 ```
 execute.client.myServer
 ```
+
 This command calls the following target:
-    * `execute.client.myServer.xml` send REST queries to my server with the body in XML format and accept response in XML. The output is saved into [client-myServer-xml.log](client-myServer-xml.log);
-    * `execute.client.myServer.json` send REST queries to my partner server with the body in JSON format and accept response in JSON. The output is saved into [client-myServer-json.log](client-myServer-json.log).
+
+ * `execute.client.myServer.xml` send REST queries to my server with the body in XML format and accept response in XML. The output is saved into [client-myServer-xml.log](client-myServer-xml.log);
+ * `execute.client.myServer.json` send REST queries to my partner server with the body in JSON format and accept response in JSON. The output is saved into [client-myServer-json.log](client-myServer-json.log).
 
 You can also execute specific task. Before, you have to execute
 ```
@@ -96,7 +98,7 @@ Request #10: [PUT /person/{id}/{measureType}/{mid}](#put-personidmeasuretypemid)
 Request #11: [GET /person/{id}/{measureType}?before={beforeDate}&after={afterDate}](#get-personidmeasuretypebeforebeforedateafterafterdate)  
 Request #12: [GET /person?measureType={measureType}&max={max}&min={min}](#get-personmeasuretypemeasuretypemaxmaxminmin)  
 
-
+***
 #### GET /person
 
 Returns a list of all the people in the database.  
@@ -160,12 +162,9 @@ HTTP Status: 200 OK
     MORE PEOPLE
      ]
 }
-
 ```
 
-
-
-
+***
 #### GET /person/{id}
 Returns all the personal information plus current measures of person identified by {id} (i.e., current measures means current health profile)  
 {id} identifier of the person  
@@ -218,9 +217,9 @@ HTTP Status: 200 OK
     }
   ]
 }
-
 ```
 
+***
 #### PUT /person/{id}
 Update the personal information of the person identified by {id} (i.e., only the person's information, not the measures of the health profile).  
 Only the information in the request are updated, the other remains as before.  
@@ -249,11 +248,11 @@ PUT http://127.0.1.1:5700/sdelab/person/1
   "lastname": "Palla,
   "birthdate": "1978-09-02",
 }
-
 ```
 #####Example Result
 HTTP Status: 201
 
+***
 #### POST /person
 Create a new person and return the newly created person with its assigned id.
 If a health profile is included, create also those measurements for the new person.  
@@ -344,6 +343,7 @@ HTTP Status: 200
 }
 ```
 
+***
 #### DELETE /person/{id}
 Delete the person identified by {id} from the system
 {id} identifier of the person
@@ -354,6 +354,7 @@ DELETE http://127.0.1.1:5700/sdelab/person/57
 #####Example Result
 HTTP Status: 204
 
+***
 #### GET /person/{id}/{measureType}
 Return the list of values (the history) of {measureType} (e.g. weight) for person identified by {id}  
 {id} identifier of the person  
@@ -401,6 +402,8 @@ HTTP Status: 200
     }
 ]
 ```
+
+***
 #### GET /person/{id}/{measureType}/{mid}
 Return the value of {measureType} (e.g. weight) identified by {mid} for person identified by {id}  
 {id} identifier of the person  
@@ -422,6 +425,8 @@ HTTP Status: 200
 ```json
 83
 ```
+
+***
 #### POST /person/{id}/{measureType}
 Save a new value for the {measureType} (e.g. weight) of person identified by {id} and archive the old value in the history
 {id} identifier of the person  
@@ -464,6 +469,8 @@ HTTP Status: 200
  "value": "72"
 }
 ```
+
+***
 #### GET /measureTypes
 Return the list of measures the model supports.  
 Response formats: XML, JSON. 
@@ -498,6 +505,8 @@ HTTP Status: 200
   ]
 }
 ```
+
+***
 #### PUT /person/{id}/{measureType}/{mid} 
 Update the value for the {measureType} (e.g., weight) identified by {mid}, related to the person identified by {id}
 {id} identifier of the person  
@@ -526,6 +535,8 @@ PUT http://127.0.1.1:5700/sdelab/1/height/12
 #####Example Result
 HTTP Status: 201
 
+
+***
 #### GET /person/{id}/{measureType}?before={beforeDate}&after={afterDate}
 Return the history of {measureType} (e.g., weight) for person {id} in the specified range of date.  
 {id} identifier of the person  
@@ -569,6 +580,8 @@ HTTP Status: 200
     }
 ]
 ```
+
+***
 #### GET /person?measureType={measureType}&max={max}&min={min}
 retrieves people whose {measureType} (e.g., weight) value is in the [{min},{max}] range (if only one for the query params is provided, use only that).  
 {measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)  
