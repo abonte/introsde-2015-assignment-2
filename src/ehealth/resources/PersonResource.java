@@ -2,16 +2,13 @@ package ehealth.resources;
 
 //import ehealth.model.MeasureDefinition;
 import ehealth.model.*;
-import ehealth.wrapper.MeasureDefinitionWrapper;
 import ehealth.wrapper.MeasureHistoryWrapper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -177,7 +174,6 @@ public class PersonResource {
         	before.setTime(sdf.parse(before_s));// all done
         	Calendar after = Calendar.getInstance();
         	after.setTime(sdf.parse(after_s));// all done
-        	Calendar today = Calendar.getInstance();
     		list_MH = HealthMeasureHistory.getByPersonMeasureDate(person, md, before, after);
     	}
     	if (list_MH == null)

@@ -3,7 +3,6 @@ package ehealth.client;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.annotation.Target;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -16,7 +15,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -25,17 +23,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 public class TestClient {
@@ -423,7 +417,7 @@ public class TestClient {
 			if(!value_after.equals(value_before))
 				result = "OK";
 		}
-		responseTemplate("10", "PUT", response, "/person/"+first_person_id+"/"+measureType, mediaType, result);
+		responseTemplate("10", "PUT", response, "/person/"+first_person_id+"/"+measureType+"/"+measure_id, mediaType, result);
 	}
 
 	
