@@ -1,4 +1,4 @@
-package ehealth.client;
+package client;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -72,6 +72,9 @@ public class TestClient {
 		String result = "ERROR";
 		String output = null;
 		Response response = service.path("person").request().accept(mediaType).get(Response.class);
+		System.out.println(response);
+		System.out.println(response.getMediaType());
+		System.out.println(response.getLocation());
 		if(response.getStatus() == 200){
 			output = response.readEntity(String.class);
 			if(mediaType == MediaType.APPLICATION_XML){
@@ -90,6 +93,7 @@ public class TestClient {
 			}
 			output = prettyFormat(output, mediaType);
 		}
+		System.out.println(response.getLocation());
 		responseTemplate("1", "GET", response, "/person", mediaType, result);
 		System.out.println(output);
 	}
@@ -107,7 +111,7 @@ public class TestClient {
 		}
 		responseTemplate("2", "GET", response, "/person/"+first_person_id, mediaType, result);
 		System.out.print(output);
-	}
+	}	
 	
 	private Response getPersonByid(String person_id) {
 		return service.path("person/"+person_id).request().accept(mediaType).get(Response.class);
@@ -158,7 +162,7 @@ public class TestClient {
 		String input = null;
 		String result = "ERROR";
 		String newid = null;
-		if(MediaType.APPLICATION_XML == MediaType.APPLICATION_XML){
+		if(mediaType == MediaType.APPLICATION_XML){
 			input = "<person>"
 							+ "<firstname>Chuck</firstname>"
 							+ "<lastname>Norris</lastname>"
@@ -179,7 +183,7 @@ public class TestClient {
 			person.put("firstname", "Chuck");
 			person.put("lastname", "Norris");
 			person.put("birthdate", "1945-01-01");
-			
+			/*
 			JSONObject mt1 = new JSONObject();
 			mt1.put("measure", "weight");
 			mt1.put("value", "72.3");
@@ -193,15 +197,15 @@ public class TestClient {
 			list.put(mt2);
 			
 			person.put("healthprofile", list);
-			
+			*/
 			input = person.toString();
 		}
 
-		Response response = service.path("/person").request(MediaType.APPLICATION_XML)
-				.post(Entity.entity(input, MediaType.APPLICATION_XML),Response.class);
+		Response response = service.path("/person").request(mediaType)
+				.post(Entity.entity(input, mediaType),Response.class);
 		String output = response.readEntity(String.class);
 		if(response.getStatus() >= 200 && response.getStatus() <= 202){
-			if(MediaType.APPLICATION_XML == MediaType.APPLICATION_XML){
+			if(mediaType == MediaType.APPLICATION_XML){
 				Element rootElement = getRootElement(output);
 				if (rootElement.getElementsByTagName("idPerson") != null ){
 					result = "OK";
@@ -216,8 +220,8 @@ public class TestClient {
 			}
 		}
 		
-		responseTemplate("4", "POST", response, "/person/", MediaType.APPLICATION_XML, result);
-		System.out.print(prettyFormat(output,MediaType.APPLICATION_XML));
+		responseTemplate("4", "POST", response, "/person/", mediaType, result);
+		System.out.print(prettyFormat(output,mediaType));
 		return newid; 
 	}
 	
@@ -470,8 +474,10 @@ public class TestClient {
 	 */
 	public void getPersonHistoryByValue() throws ParserConfigurationException, SAXException, IOException {
 		String result = "ERROR";
+		String min = "70";
+		String max = "80";
 		Response response = service.path("/person/")
-				.queryParam("measureType", measureType).queryParam("min","0").queryParam("max", "100")
+				.queryParam("measureType", measureType).queryParam("min",min).queryParam("max", max)
 				.request(mediaType).get(Response.class);
 		String output = response.readEntity(String.class);
 		if(response.getStatus() == 200 ){
@@ -489,7 +495,7 @@ public class TestClient {
 			if(length > 0)
 				result = "OK";
 		}
-		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max=0&min=100", mediaType, result);
+		responseTemplate("12", "GET", response, "/person?measureType="+measureType+"&max="+max+"&min="+min, mediaType, result);
 		System.out.println(output);
 	}
 

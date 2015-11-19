@@ -114,9 +114,7 @@ public class PersonCollectionResource {
     public Person newPerson(Person person) throws IOException {
     	System.out.println("Creating new person...");
     	// checks if person includes life statuses, in other words a 'healthprofile'
-    	System.out.println(person.getLastname());
-    	System.out.println(person.getLifeStatus().isEmpty());
-    	if(person.getLifeStatus().isEmpty()){
+    	if(person.getLifeStatus() == null){
     		return Person.savePerson(person);
     	}else{
     		//removes the life statuses in the persons and puts them in another variable

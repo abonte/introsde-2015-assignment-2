@@ -83,9 +83,11 @@ public class Person implements Serializable {
     public String getUsername(){
         return username;
     }*/
+    
     public Date getBirthdate(){
         return birthdate;
     }
+    
     /*@XmlTransient
     public String getEmail(){
         return email;

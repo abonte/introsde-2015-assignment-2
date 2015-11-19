@@ -14,13 +14,15 @@ URL of my partner server: [https://arcane-beach-6023.herokuapp.com/sdelab/](http
 
 ### Code
 
+![alt text](https://raw.githubusercontent.com/IntroSDE/lab07/master/lifecoach.png "Class Diagram")
+
 *[src/](src/)*: contains source code;  
-*[src/ehealth](src/ehealth)*:;  
+*[src/ehealth](src/ehealth)*: contains all ;  
 *[src/ehealth/dao](src/ehealth/dao)*:;  
 *[src/ehealth/model](src/ehealth/model)*:;  
 *[src/ehealth/resources](src/ehealth/resources)*:;  
 *[src/ehealth/wrapper](src/ehealth/wrapper)*:;  
-*[src/client](src/client)*:;  
+*[src/client](src/client)* contains the client:;  
 *[src/ehealth/App.java](src/ehealth/App.java)*:;  
 
 ### Installation

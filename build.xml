@@ -149,7 +149,7 @@
 	<target name="execute.client.myServer.xml">
 		<record name="client-MyServer-xml.log" action="start" append="no"/>	
 		<echo message="'execute.client.myServer.xml' target has been called"/>  		
-		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+		<java classname="client.TestClient" classpath="${build.dir}" fork="true">
 			<arg value="myServer"/>
 			<arg value="XML"/>
 			<classpath>
@@ -167,7 +167,7 @@
 	<target name="execute.client.partnerServer.xml">
 		<record name="client-server-xml.log" action="start" append="no"/>
 		<echo message="'execute.client.partnerServer.xml' target has been called"/>
-		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+		<java classname="client.TestClient" classpath="${build.dir}" fork="true">
 			<arg value="partnerServer"/>
 			<arg value="XML"/>
 			<classpath>
@@ -185,7 +185,7 @@
 	<target name="execute.client.myServer.json">
 		<record name="client-MyServer-json.log" action="start" append="no"/>	
 		<echo message="'execute.client.myServer.json' target has been called"/>  		
-		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+		<java classname="client.TestClient" classpath="${build.dir}" fork="true">
 			<arg value="myServer"/>
 			<arg value="JSON"/>
 			<classpath>
@@ -203,7 +203,7 @@
 	<target name="execute.client.partnerServer.json">
 		<record name="client-server-json.log" action="start" append="no"/>
 		<echo message="'execute.client.partnerServer.json' target has been called"/>
-		<java classname="ehealth.client.TestClient" classpath="${build.dir}" fork="true">
+		<java classname="client.TestClient" classpath="${build.dir}" fork="true">
 			<arg value="partnerServer"/>
 			<arg value="JSON"/>
 			<classpath>
