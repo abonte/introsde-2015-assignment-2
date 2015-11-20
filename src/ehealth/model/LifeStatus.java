@@ -118,9 +118,14 @@ public class LifeStatus implements Serializable {
 	
 	public static LifeStatus getLifeStatusByMeasureDefPerson(MeasureDefinition md, Person p){
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
-		LifeStatus ls = em.createNamedQuery("LifeStatus.findByMeasureDefPerson", LifeStatus.class).setParameter(1, p).setParameter(2, md).getSingleResult();
-		LifeCoachDao.instance.closeConnections(em);
-		return ls;
+		try{
+			LifeStatus ls = em.createNamedQuery("LifeStatus.findByMeasureDefPerson", LifeStatus.class).setParameter(1, p).setParameter(2, md).getSingleResult();
+			LifeCoachDao.instance.closeConnections(em);
+			return ls;
+		}
+		catch(Exception e){ 	          
+			return null; 
+		} 
 	}
 	
 	public static List<LifeStatus> getAll() {

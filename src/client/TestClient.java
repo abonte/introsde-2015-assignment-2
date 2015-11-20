@@ -203,6 +203,7 @@ public class TestClient {
 
 		Response response = service.path("/person").request(mediaType)
 				.post(Entity.entity(input, mediaType),Response.class);
+		System.out.println(input);
 		String output = response.readEntity(String.class);
 		if(response.getStatus() >= 200 && response.getStatus() <= 202){
 			if(mediaType == MediaType.APPLICATION_XML){
@@ -219,8 +220,8 @@ public class TestClient {
 				}
 			}
 		}
-		
-		responseTemplate("4", "POST", response, "/person/", mediaType, result);
+		System.out.println(output);
+		responseTemplate("4", "POST", response, "/person", mediaType, result);
 		System.out.print(prettyFormat(output,mediaType));
 		return newid; 
 	}

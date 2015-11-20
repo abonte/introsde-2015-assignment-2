@@ -216,7 +216,8 @@ public class PersonResource {
 		
 		//remove actual 'lifestatus' for measureName
 		LifeStatus lf = LifeStatus.getLifeStatusByMeasureDefPerson(md,person);
-		LifeStatus.removeLifeStatus(lf);
+		if(lf != null)
+			LifeStatus.removeLifeStatus(lf);
 		
 		//save new 'lifestatus' for measureName
 		LifeStatus newlf = new LifeStatus(person, md, hmh.getValue());
