@@ -7,10 +7,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 import ehealth.model.MeasureDefinition;
-
+/**
+ * Wrapper used when are listened the measureName of all the MeasureDefinition
+ *
+ */
 @XmlRootElement(name="measureTypes")
 public class MeasureDefinitionWrapper {
 	

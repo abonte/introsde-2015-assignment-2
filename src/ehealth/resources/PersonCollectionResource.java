@@ -95,7 +95,7 @@ public class PersonCollectionResource {
      * The method accepts a person and store it in the database.
      * The tag 'healthprofile' in the data sent by the client includes a list of 'lifestatus'.
      * The object 'lifestatus' represents a measure of the person with the value (e.g. weight).
-     * The method distinguishes if a person includes a 'healthprofile'.
+     * The method distinguishes if a person includes or not a 'healthprofile'.
      * The person without a 'healthprofile' is saved in the database.
      * The person with a 'healthprofile' is saved performing two steps. In the first step the person
      * is saved in the database in order to retrieve the id. In the second step each 'lifestatus', which
@@ -150,6 +150,7 @@ public class PersonCollectionResource {
     				control.add(temp.getIdMeasureDef());
     				//associates the lifestatus with the corresponding measureDefinition
     				list_lifeStatus.get(i).setMeasureDefinition(temp); 
+    				//saves the new measure value of the lifestatus also in the history
     				history_element.setMeasureDefinition(temp);
     				history_element.setPerson(p);
     				history_element.setValue(list_lifeStatus.get(i).getValue());
@@ -163,12 +164,11 @@ public class PersonCollectionResource {
     }
     
     
-    
-
-    // Defines that the next path parameter after the base url is
-    // treated as a parameter and passed to the PersonResources
-    // Allows to type http://localhost:599/base_url/1
-    // 1 will be treaded as parameter todo and passed to PersonResource
+    /** Defines that the next path parameter after the base url is
+    * treated as a parameter and passed to the PersonResources
+    * Allows to type http://localhost:599/base_url/1
+    * 1 will be treaded as parameter todo and passed to PersonResource
+    */
     @Path("{personId}")
     public PersonResource getPerson(@PathParam("personId") int id) {
         return new PersonResource(uriInfo, request, id);

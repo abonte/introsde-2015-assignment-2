@@ -159,7 +159,13 @@ public class Person implements Serializable {
         tx.commit();
         LifeCoachDao.instance.closeConnections(em);
     }
-
+    /**
+     * Returns the list of people whose measure is in the range min-max
+     * @param md MeasureDefinition
+     * @param min minimum value	
+     * @param max maximum value
+     * @return list of "Person" object
+     */
 	public static List<Person> getByMeasureNameMinMax(MeasureDefinition md, Double min, Double max) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
         em.getEntityManagerFactory().getCache().evictAll();

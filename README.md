@@ -10,20 +10,25 @@ This repository is the solution to the [second assignment](https://sites.google.
 
 The name of the student with whom I worked: Carlo Nicolò [https://github.com/carlonicolo/introsde-2015-assignment-2](https://github.com/carlonicolo/introsde-2015-assignment-2)  
 URL of my server: [https://peaceful-hamlet-5616.herokuapp.com/sdelab](https://peaceful-hamlet-5616.herokuapp.com/sdelab)  
-URL of my partner server: [https://arcane-beach-6023.herokuapp.com/sdelab/](https://arcane-beach-6023.herokuapp.com/sdelab/)  
+URL of my partner server: [https://introsde-server-carlo.herokuapp.com/sdelab/](https://introsde-server-carlo.herokuapp.com/sdelab/)  
 
 ### Code
 
 ![alt text](https://raw.githubusercontent.com/IntroSDE/lab07/master/lifecoach.png "Class Diagram")
+(The class MeasureDefaultRange is not used in this assignment)
 
 *[src/](src/)*: contains source code;  
-*[src/ehealth](src/ehealth)*: contains all ;  
-*[src/ehealth/dao](src/ehealth/dao)*:;  
-*[src/ehealth/model](src/ehealth/model)*:;  
-*[src/ehealth/resources](src/ehealth/resources)*:;  
-*[src/ehealth/wrapper](src/ehealth/wrapper)*:;  
-*[src/client](src/client)* contains the client:;  
-*[src/ehealth/App.java](src/ehealth/App.java)*:;  
+*[src/ehealth](src/ehealth)*: contains all the code regarding the server  ;  
+*[src/ehealth/dao](src/ehealth/dao)*: contains the data access object;  
+*[src/ehealth/model](src/ehealth/model)*: contains the definition of *Person*, *LifeStatus*, *HealthMeasureHistory*, *MeasureDefinition* ;  
+*[src/ehealth/resources](src/ehealth/resources)*: contains the resource classes;  
+*[src/ehealth/wrapper](src/ehealth/wrapper)*: contains the wrapper used for format XML and JSON;  
+*[src/client](src/client)*: contains the client;  
+*[src/ehealth/App.java](src/ehealth/App.java)*:stand alone server;  
+*[client-server-xml.log](client-server-xml.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using XML format;  
+*[client-server-json.log](client-server-json.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using JSON format;  
+*[client-myServer-json.log](client-myServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using XML format;  
+*[client-myServer-json.log](client-myServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using JSON format;  
 
 ### Installation
 
@@ -85,7 +90,7 @@ If you want to run the server locally then run:
 ant install
 ant start
 ```
-In order to run the client on your local server modify the variable *uriServer* in the [src/client/TestClient.java](src/client/TestClient.java).
+In order to run the client querying your local server modify the variable *uriServer* in the [src/client/TestClient.java](src/client/TestClient.java).
 
 Request #1: [GET /person](#get-person)  
 Request #2: [GET /person/{id}](#get-personid)   

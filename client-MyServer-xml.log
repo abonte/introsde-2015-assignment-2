@@ -1,21 +1,21 @@
-     [echo] 'execute.client.partnerServer.xml' target has been called
-     [java] Server URL : https://introsde-server-carlo.herokuapp.com/sdelab/
+     [echo] 'execute.client.myServer.xml' target has been called
+     [java] Server URL : https://peaceful-hamlet-5616.herokuapp.com/sdelab
      [java] MediaType  : application/xml
      [java] ===========================================================================
      [java] Request #1: GET /person Accept: APPLICATION/XML Content-type: APPLICATION/XML
-     [java]      => Result: OK
+     [java]      => Result: ERROR
      [java]      => HTTP Status: 200
      [java]  
      [java] <people>
      [java]     <person>
      [java]         <idPerson>1</idPerson>
      [java]         <firstname>Andrea</firstname>
-     [java]         <lastname>Brigante</lastname>
-     [java]         <birthdate>1977-08-31T09:00:00Z</birthdate>
+     [java]         <lastname>Grant</lastname>
+     [java]         <birthdate>1978-08-31T22:00:00Z</birthdate>
      [java]         <healthprofile>
      [java]             <measureType>
      [java]                 <measure>weight</measure>
-     [java]                 <value>110</value>
+     [java]                 <value>72.3</value>
      [java]             </measureType>
      [java]             <measureType>
      [java]                 <measure>height</measure>
@@ -25,75 +25,19 @@
      [java]     </person>
      [java]     <person>
      [java]         <idPerson>2</idPerson>
-     [java]         <firstname>Andrew</firstname>
-     [java]         <lastname>Law</lastname>
-     [java]         <birthdate>1998-08-31T08:00:00Z</birthdate>
+     [java]         <firstname>Theresia</firstname>
+     [java]         <lastname>Rodriguez</lastname>
+     [java]         <birthdate>1955-04-10T23:00:00Z</birthdate>
      [java]         <healthprofile>
      [java]             <measureType>
-     [java]                 <measure>height</measure>
-     [java]                 <value>1.87</value>
-     [java]             </measureType>
-     [java]             <measureType>
      [java]                 <measure>weight</measure>
-     [java]                 <value>89</value>
+     [java]                 <value>50</value>
      [java]             </measureType>
-     [java]         </healthprofile>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>3</idPerson>
-     [java]         <firstname>Bob</firstname>
-     [java]         <lastname>Marley</lastname>
-     [java]         <birthdate>1968-08-31T10:00:00Z</birthdate>
-     [java]         <healthprofile>
      [java]             <measureType>
      [java]                 <measure>height</measure>
-     [java]                 <value>1.70</value>
-     [java]             </measureType>
-     [java]             <measureType>
-     [java]                 <measure>weight</measure>
-     [java]                 <value>68</value>
+     [java]                 <value>1.66</value>
      [java]             </measureType>
      [java]         </healthprofile>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>51</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>53</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>55</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>57</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>59</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>61</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>63</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
-     [java]     </person>
-     [java]     <person>
-     [java]         <idPerson>65</idPerson>
-     [java]         <firstname>Andrea</firstname>
-     [java]         <healthprofile/>
      [java]     </person>
      [java] </people>
      [java] 
@@ -105,12 +49,12 @@
      [java] <person>
      [java]     <idPerson>1</idPerson>
      [java]     <firstname>Andrea</firstname>
-     [java]     <lastname>Brigante</lastname>
-     [java]     <birthdate>1977-08-31T09:00:00Z</birthdate>
+     [java]     <lastname>Grant</lastname>
+     [java]     <birthdate>1978-08-31T22:00:00Z</birthdate>
      [java]     <healthprofile>
      [java]         <measureType>
      [java]             <measure>weight</measure>
-     [java]             <value>110</value>
+     [java]             <value>72.3</value>
      [java]         </measureType>
      [java]         <measureType>
      [java]             <measure>height</measure>
@@ -129,7 +73,7 @@
      [java]      => HTTP Status: 200
      [java]  
      [java] <person>
-     [java]     <idPerson>68</idPerson>
+     [java]     <idPerson>61</idPerson>
      [java]     <firstname>Chuck</firstname>
      [java]     <lastname>Norris</lastname>
      [java]     <birthdate>1945-01-01T00:00:00Z</birthdate>
@@ -145,7 +89,7 @@
      [java]     </healthprofile>
      [java] </person>
      [java] ===========================================================================
-     [java] Request #5: DELETE /person/68 Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java] Request #5: DELETE /person/61 Accept: APPLICATION/XML Content-type: APPLICATION/XML
      [java]      => Result: OK
      [java]      => HTTP Status: 204
      [java]  
@@ -163,7 +107,7 @@
      [java]     <measureType>bmi</measureType>
      [java] </measureTypes>
      [java] ===========================================================================
-     [java] Request #6: GET /person/{1,65}/{[weight, height, steps, blood pressure, heart rate, bmi]} Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java] Request #6: GET /person/{1,2}/{[weight, height, steps, blood pressure, heart rate, bmi]} Accept: APPLICATION/XML Content-type: APPLICATION/XML
      [java]      => Result: OK
      [java]      => HTTP Status: 200
      [java]  
@@ -172,94 +116,18 @@
      [java]  WEIGHT 
      [java]  <measureHistory>
      [java]     <mesure>
-     [java]         <mid>2</mid>
-     [java]         <value>110</value>
-     [java]         <created>2015-11-18T09:00:00Z</created>
+     [java]         <mid>1</mid>
+     [java]         <value>72.3</value>
+     [java]         <created>2015-11-13T23:00:00Z</created>
      [java]     </mesure>
      [java] </measureHistory>
      [java]  
      [java]  HEIGHT 
      [java]  <measureHistory>
      [java]     <mesure>
-     [java]         <mid>1</mid>
-     [java]         <value>72</value>
-     [java]         <created>2015-11-18T09:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>53</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>54</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>57</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>58</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>61</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>62</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>65</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java]     <mesure>
-     [java]         <mid>66</mid>
-     [java]         <value>72</value>
-     [java]         <created>2011-12-09T00:00:00Z</created>
-     [java]     </mesure>
-     [java] </measureHistory>
-     [java] 
-     [java] Second person, id = 65
-     [java] 
-     [java] ===========================================================================
-     [java] Request #7: GET /person/1/height/1 Accept: APPLICATION/XML Content-type: APPLICATION/XML
-     [java]      => Result: OK
-     [java]      => HTTP Status: 200
-     [java]  
-     [java] 72
-     [java] ===========================================================================
-     [java] Request #8: POST /person/1/height Accept: APPLICATION/XML Content-type: APPLICATION/XML
-     [java]      => Result: OK
-     [java]      => HTTP Status: 200
-     [java]  
-     [java] <lifestatus>
-     [java]     <measure>height</measure>
-     [java]     <value>72</value>
-     [java] </lifestatus>
-     [java] 
-     [java] ===========================================================================
-     [java] Request #10: PUT /person/1/height/1 Accept: APPLICATION/XML Content-type: APPLICATION/XML
-     [java]      => Result: OK
-     [java]      => HTTP Status: 201
-     [java]  
-     [java] ===========================================================================
-     [java] Request #11: GET /person/1/height?before=2015-11-20&after=2011-01-01 Accept: APPLICATION/XML Content-type: APPLICATION/XML
-     [java]      => Result: OK
-     [java]      => HTTP Status: 200
-     [java]  
-     [java] <measureHistory>
-     [java]     <mesure>
-     [java]         <mid>1</mid>
-     [java]         <value>90</value>
-     [java]         <created>2015-11-18T09:00:00Z</created>
+     [java]         <mid>2</mid>
+     [java]         <value>1.86</value>
+     [java]         <created>2015-11-13T23:00:00Z</created>
      [java]     </mesure>
      [java]     <mesure>
      [java]         <mid>53</mid>
@@ -306,6 +174,120 @@
      [java]         <value>72</value>
      [java]         <created>2011-12-09T00:00:00Z</created>
      [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>70</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java] </measureHistory>
+     [java] 
+     [java] Second person, id = 2
+     [java]  
+     [java]  WEIGHT 
+     [java]  <measureHistory>
+     [java]     <mesure>
+     [java]         <mid>3</mid>
+     [java]         <value>50</value>
+     [java]         <created>2015-11-13T23:00:00Z</created>
+     [java]     </mesure>
+     [java] </measureHistory>
+     [java]  
+     [java]  HEIGHT 
+     [java]  <measureHistory>
+     [java]     <mesure>
+     [java]         <mid>4</mid>
+     [java]         <value>72</value>
+     [java]         <created>2015-11-13T23:00:00Z</created>
+     [java]     </mesure>
+     [java] </measureHistory>
+     [java] 
+     [java] ===========================================================================
+     [java] Request #7: GET /person/2/height/4 Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] 72
+     [java] ===========================================================================
+     [java] Request #8: POST /person/1/height Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] <lifestatus>
+     [java]     <measure>height</measure>
+     [java]     <value>72</value>
+     [java] </lifestatus>
+     [java] 
+     [java] ===========================================================================
+     [java] Request #10: PUT /person/1/height/4 Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java]      => Result: OK
+     [java]      => HTTP Status: 201
+     [java]  
+     [java] ===========================================================================
+     [java] Request #11: GET /person/1/height?before=2015-11-20&after=2011-01-01 Accept: APPLICATION/XML Content-type: APPLICATION/XML
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] <measureHistory>
+     [java]     <mesure>
+     [java]         <mid>2</mid>
+     [java]         <value>1.86</value>
+     [java]         <created>2015-11-13T23:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>53</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>54</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>57</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>58</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>61</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>62</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>65</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>66</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>69</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>70</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
+     [java]     <mesure>
+     [java]         <mid>73</mid>
+     [java]         <value>72</value>
+     [java]         <created>2011-12-09T00:00:00Z</created>
+     [java]     </mesure>
      [java] </measureHistory>
      [java] 
      [java] ===========================================================================
@@ -317,12 +299,12 @@
      [java]     <person>
      [java]         <idPerson>1</idPerson>
      [java]         <firstname>Andrea</firstname>
-     [java]         <lastname>Brigante</lastname>
-     [java]         <birthdate>1977-08-31T09:00:00Z</birthdate>
+     [java]         <lastname>Grant</lastname>
+     [java]         <birthdate>1978-08-31T22:00:00Z</birthdate>
      [java]         <healthprofile>
      [java]             <measureType>
      [java]                 <measure>weight</measure>
-     [java]                 <value>110</value>
+     [java]                 <value>72.3</value>
      [java]             </measureType>
      [java]             <measureType>
      [java]                 <measure>height</measure>

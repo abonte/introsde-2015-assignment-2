@@ -8,6 +8,9 @@ import java.net.InetAddress;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+/**
+ * Stand alone Server
+ */
 public class App
 {
     public static void main(String[] args) throws IllegalArgumentException, IOException, URISyntaxException

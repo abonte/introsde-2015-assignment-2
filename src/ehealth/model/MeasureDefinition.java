@@ -97,7 +97,11 @@ public class MeasureDefinition implements Serializable {
 	    LifeCoachDao.instance.closeConnections(em);
 	    return list;
 	}
-	
+	/**
+	 * Given a measure name, the function returns the corresponding MeasureDefinition object.
+	 * @param measureName
+	 * @return MeasureDefinition
+	 */
 	public static MeasureDefinition getMeasureDefinitionByName(String measureName) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		try{

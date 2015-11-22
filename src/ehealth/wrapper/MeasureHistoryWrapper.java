@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import ehealth.model.HealthMeasureHistory;;
 
+/**
+ * Wrapper used when is listened the history
+ */
 @XmlRootElement(name="measureHistory")
 public class MeasureHistoryWrapper {
 

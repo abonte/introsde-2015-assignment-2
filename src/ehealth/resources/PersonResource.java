@@ -85,24 +85,24 @@ public class PersonResource {
      * Request #3: PUT /person/{id} should update the personal information of the person identified by {id}
      * (e.i., only the person's information, not the measures of the health profile)
      * @param person
-     * @return the response to this operation: the content is not present
+     * @return the response to this operation
      */
     @PUT
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response putPerson(Person person) {
         System.out.println("--> Updating Person... " +this.id);
         System.out.println("--> "+person.toString());
-        //Person.updatePerson(person);
         Response res;
         Person existing = getPersonById(this.id);
 
         if (existing == null) {
+        	//the person is not found
             res = Response.noContent().build();
         } else {
             res = Response.created(uriInfo.getAbsolutePath()).build();
             person.setIdPerson(this.id);
             //checks if the client sent a name in order to update the person
-            //if there is no name, remain the previous name
+            //if there is no name, remain the previous name, the same happens with Lastname and Birthdate
             if (person.getName() == null){
             	person.setName(existing.getName());
             }
@@ -137,7 +137,6 @@ public class PersonResource {
         //Person person = entityManager.find(Person.class, personId); 
 
         Person person = Person.getPersonById(personId);
-        //System.out.println("Person: "+person.toString());
         return person;
     }
     
@@ -158,22 +157,23 @@ public class PersonResource {
     public MeasureHistoryWrapper getPersonHistory(@PathParam("measureType") String measureName, @QueryParam("before") String before_s,
     		@QueryParam("after") String after_s) throws ParseException {
     	
-    	// TODO midificare root element HealthmeasureHISTORIES
     	//searches the measure definition associated with the name of the measure
     	MeasureDefinition md = new MeasureDefinition();
     	md = MeasureDefinition.getMeasureDefinitionByName(measureName);
 
     	Person person = this.getPersonById(id);
     	List<HealthMeasureHistory> list_MH = new ArrayList<HealthMeasureHistory>();
-    	// TODO invertire if else
-    	if(before_s == null || after_s == null){
+
+    	if(before_s == null || after_s == null || measureName == null){
+    		//one of the input is not set
     		list_MH = HealthMeasureHistory.getByPersonMeasure(person, md);
     	}else{
     		Calendar before = Calendar.getInstance();
         	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        	before.setTime(sdf.parse(before_s));// all done
+        	before.setTime(sdf.parse(before_s));
         	Calendar after = Calendar.getInstance();
-        	after.setTime(sdf.parse(after_s));// all done
+        	after.setTime(sdf.parse(after_s));
+        	//retrieves the history in a specified range of date
     		list_MH = HealthMeasureHistory.getByPersonMeasureDate(person, md, before, after);
     	}
     	if (list_MH == null)
@@ -188,7 +188,7 @@ public class PersonResource {
      * identified by {mid} for person identified by {id}
      * @param measureName
      * @param mid
-     * @return a string representing the value of the HealthMeasureHistory with id = {mid}
+     * @return a string representing the value of the HealthMeasureHistory element with id = {mid}
      */
     @GET
     @Path("{measureType}/{mid}")
@@ -234,6 +234,9 @@ public class PersonResource {
     /**
      * Request #10: PUT /person/{id}/{measureType}/{mid} should update the value for the {measureType}
      * (e.g., weight) identified by {mid}, related to the person identified by {id}
+     * @param HealthMeasureHistory element
+     * @param mid the id of the HealthMeasureHistory element to modify
+     * @return response object
      */    
     @PUT
     @Path("{measureType}/{mid}")

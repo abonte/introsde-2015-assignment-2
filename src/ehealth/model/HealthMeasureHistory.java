@@ -137,6 +137,12 @@ public class HealthMeasureHistory implements Serializable {
 	    return list;
 	}
 	
+	/**
+	 * Returns the history of a measureType for a person
+	 * @param p
+	 * @param md
+	 * @return list of HealthMeasureHistory
+	 */
 	public static List<HealthMeasureHistory> getByPersonMeasure(Person p, MeasureDefinition md) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();
 		TypedQuery<HealthMeasureHistory> query = em.createNamedQuery("HealthMeasureHistory.findByMeasure", HealthMeasureHistory.class);
@@ -176,7 +182,15 @@ public class HealthMeasureHistory implements Serializable {
 	    tx.commit();
 	    LifeCoachDao.instance.closeConnections(em);
 	}
-
+	
+	/**
+	 * Returns the history in a specified range of date for a specific person
+	 * @param person
+	 * @param md MeasureDefinition
+	 * @param before representing the end date of the range
+	 * @param after representing the start date of the range
+	 * @return list of HelthMeasureHistory elements
+	 */
 	public static List<HealthMeasureHistory> getByPersonMeasureDate(Person person, MeasureDefinition md, Calendar before,
 			Calendar after) {
 		EntityManager em = LifeCoachDao.instance.createEntityManager();

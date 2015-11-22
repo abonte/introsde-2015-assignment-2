@@ -1,0 +1,297 @@
+     [echo] 'execute.client.myServer.json' target has been called
+     [java] Server URL : https://peaceful-hamlet-5616.herokuapp.com/sdelab
+     [java] MediaType  : application/json
+     [java] ===========================================================================
+     [java] Request #1: GET /person Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: ERROR
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] {"people": [
+     [java]     {
+     [java]         "firstname": "Andrea",
+     [java]         "healthprofile": [
+     [java]             {
+     [java]                 "measure": "weight",
+     [java]                 "value": "72.3"
+     [java]             },
+     [java]             {
+     [java]                 "measure": "height",
+     [java]                 "value": "72"
+     [java]             }
+     [java]         ],
+     [java]         "idPerson": 1,
+     [java]         "birthdate": "1978-08-31",
+     [java]         "lastname": "Grant"
+     [java]     },
+     [java]     {
+     [java]         "firstname": "Theresia",
+     [java]         "healthprofile": [
+     [java]             {
+     [java]                 "measure": "weight",
+     [java]                 "value": "50"
+     [java]             },
+     [java]             {
+     [java]                 "measure": "height",
+     [java]                 "value": "1.66"
+     [java]             }
+     [java]         ],
+     [java]         "idPerson": 2,
+     [java]         "birthdate": "1955-04-10",
+     [java]         "lastname": "Rodriguez"
+     [java]     }
+     [java] ]}
+     [java] ===========================================================================
+     [java] Request #2: GET /person/1 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] {
+     [java]     "firstname": "Andrea",
+     [java]     "healthprofile": [
+     [java]         {
+     [java]             "measure": "weight",
+     [java]             "value": "72.3"
+     [java]         },
+     [java]         {
+     [java]             "measure": "height",
+     [java]             "value": "72"
+     [java]         }
+     [java]     ],
+     [java]     "idPerson": 1,
+     [java]     "birthdate": "1978-08-31",
+     [java]     "lastname": "Grant"
+     [java] }===========================================================================
+     [java] Request #3: PUT /person/1 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 201
+     [java]  
+     [java] ===========================================================================
+     [java] Request #4: POST /person Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] {
+     [java]     "firstname": "Chuck",
+     [java]     "idPerson": 62,
+     [java]     "birthdate": "1945-01-01",
+     [java]     "lastname": "Norris"
+     [java] }===========================================================================
+     [java] Request #5: DELETE /person/62 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 204
+     [java]  
+     [java] ===========================================================================
+     [java] Request #9: GET /measureTypes Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] {"measureTypes": [
+     [java]     "weight",
+     [java]     "height",
+     [java]     "steps",
+     [java]     "blood pressure",
+     [java]     "heart rate",
+     [java]     "bmi"
+     [java] ]}===========================================================================
+     [java] Request #6: GET /person/{1,2}/{[weight, height, steps, blood pressure, heart rate, bmi]} Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] First person, id = 1
+     [java]  
+     [java]  WEIGHT 
+     [java]  [{
+     [java]     "created": "2015-11-13",
+     [java]     "mid": 1,
+     [java]     "value": "72.3"
+     [java] }] 
+     [java]  HEIGHT 
+     [java]  [
+     [java]     {
+     [java]         "created": "2015-11-13",
+     [java]         "mid": 2,
+     [java]         "value": "1.86"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 53,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 54,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 57,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 58,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 61,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 62,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 65,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 66,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 69,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 70,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 73,
+     [java]         "value": "72"
+     [java]     }
+     [java] ]
+     [java] Second person, id = 2
+     [java]  
+     [java]  WEIGHT 
+     [java]  [{
+     [java]     "created": "2015-11-13",
+     [java]     "mid": 3,
+     [java]     "value": "50"
+     [java] }] 
+     [java]  HEIGHT 
+     [java]  [{
+     [java]     "created": "2015-11-13",
+     [java]     "mid": 4,
+     [java]     "value": "90"
+     [java] }]
+     [java] ===========================================================================
+     [java] Request #7: GET /person/2/height/4 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] 90
+     [java] ===========================================================================
+     [java] Request #8: POST /person/1/height Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] {
+     [java]     "measure": "height",
+     [java]     "value": "72"
+     [java] }
+     [java] ===========================================================================
+     [java] Request #10: PUT /person/1/height/4 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: ERROR
+     [java]      => HTTP Status: 201
+     [java]  
+     [java] ===========================================================================
+     [java] Request #11: GET /person/1/height?before=2015-11-20&after=2011-01-01 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] [
+     [java]     {
+     [java]         "created": "2015-11-13",
+     [java]         "mid": 2,
+     [java]         "value": "1.86"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 53,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 54,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 57,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 58,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 61,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 62,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 65,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 66,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 69,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 70,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 73,
+     [java]         "value": "72"
+     [java]     },
+     [java]     {
+     [java]         "created": "2011-12-09",
+     [java]         "mid": 74,
+     [java]         "value": "72"
+     [java]     }
+     [java] ]
+     [java] ===========================================================================
+     [java] Request #12: GET /person?measureType=height&max=80&min=70 Accept: APPLICATION/JSON Content-type: APPLICATION/JSON
+     [java]      => Result: OK
+     [java]      => HTTP Status: 200
+     [java]  
+     [java] [{
+     [java]     "firstname": "Andrea",
+     [java]     "healthprofile": [
+     [java]         {
+     [java]             "measure": "weight",
+     [java]             "value": "72.3"
+     [java]         },
+     [java]         {
+     [java]             "measure": "height",
+     [java]             "value": "72"
+     [java]         }
+     [java]     ],
+     [java]     "idPerson": 1,
+     [java]     "birthdate": "1978-08-31",
+     [java]     "lastname": "Grant"
+     [java] }]

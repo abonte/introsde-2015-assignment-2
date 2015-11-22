@@ -11,8 +11,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ehealth.model.Person;
 
+/**
+ * Wrapper used when are listened the person
+ *
+ */
 @XmlRootElement(name="people")
-//@XmlAccessorType(XmlAccessType.FIELD)
 public class PeopleWrapper {
 
 	@XmlElement(name="person")
