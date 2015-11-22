@@ -14,7 +14,7 @@ URL of my partner server: [https://introsde-server-carlo.herokuapp.com/sdelab/](
 
 ### Code
 
-![alt text](https://raw.githubusercontent.com/IntroSDE/lab07/master/lifecoach.png "Class Diagram")
+![alt text](https://raw.githubusercontent.com/IntroSDE/lab07/master/lifecoach.png "Class Diagram")  
 (The class MeasureDefaultRange is not used in this assignment)
 
 *[src/](src/)*: contains source code;  
@@ -22,13 +22,13 @@ URL of my partner server: [https://introsde-server-carlo.herokuapp.com/sdelab/](
 *[src/ehealth/dao](src/ehealth/dao)*: contains the data access object;  
 *[src/ehealth/model](src/ehealth/model)*: contains the definition of *Person*, *LifeStatus*, *HealthMeasureHistory*, *MeasureDefinition* ;  
 *[src/ehealth/resources](src/ehealth/resources)*: contains the resource classes;  
-*[src/ehealth/wrapper](src/ehealth/wrapper)*: contains the wrapper used for format XML and JSON;  
+*[src/ehealth/wrapper](src/ehealth/wrapper)*: contains the wrapper used to format XML and JSON;  
 *[src/client](src/client)*: contains the client;  
-*[src/ehealth/App.java](src/ehealth/App.java)*:stand alone server;  
+*[src/ehealth/App.java](src/ehealth/App.java)*: stand alone server;  
 *[client-server-xml.log](client-server-xml.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using XML format;  
 *[client-server-json.log](client-server-json.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using JSON format;  
-*[client-myServer-json.log](client-myServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using XML format;  
-*[client-myServer-json.log](client-myServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using JSON format;  
+*[client-MyServer-json.log](client-MyServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using XML format;  
+*[client-MyServer-json.log](client-MyServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using JSON format;  
 
 ### Installation
 
@@ -70,8 +70,8 @@ execute.client.myServer
 
 This command calls the following target:
 
- * `execute.client.myServer.xml` send REST queries to my server with the body in XML format and accept response in XML. The output is saved into [client-myServer-xml.log](client-myServer-xml.log);
- * `execute.client.myServer.json` send REST queries to my partner server with the body in JSON format and accept response in JSON. The output is saved into [client-myServer-json.log](client-myServer-json.log).
+ * `execute.client.myServer.xml` send REST queries to my server with the body in XML format and accept response in XML. The output is saved into [client-MyServer-xml.log](client-MyServer-xml.log);
+ * `execute.client.myServer.json` send REST queries to my partner server with the body in JSON format and accept response in JSON. The output is saved into [client-MyServer-json.log](client-MyServer-json.log).
 
 You can also execute specific task. Before, you have to execute
 ```
@@ -91,6 +91,8 @@ ant install
 ant start
 ```
 In order to run the client querying your local server modify the variable *uriServer* in the [src/client/TestClient.java](src/client/TestClient.java).
+
+### REST APIs
 
 Request #1: [GET /person](#get-person)  
 Request #2: [GET /person/{id}](#get-personid)   
@@ -173,7 +175,7 @@ HTTP Status: 200 OK
 
 ***
 #### GET /person/{id}
-Returns all the personal information plus current measures of person identified by {id} (i.e., current measures means current health profile)  
+Returns all the personal information plus current measures of person identified by {id} (e.g., current measures means current health profile)  
 {id} identifier of the person  
 Response formats: XML, JSON.
 #####Example Request
@@ -352,7 +354,7 @@ HTTP Status: 200
 
 ***
 #### DELETE /person/{id}
-Delete the person identified by {id} from the system
+Delete the person identified by {id} from the system  
 {id} identifier of the person
 #####Example Request
 ```
@@ -365,7 +367,7 @@ HTTP Status: 204
 #### GET /person/{id}/{measureType}
 Return the list of values (the history) of {measureType} (e.g. weight) for person identified by {id}  
 {id} identifier of the person  
-{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi) 
+{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)  
 Response formats: XML, JSON.
 #####Example Request
 ```
@@ -414,7 +416,7 @@ HTTP Status: 200
 #### GET /person/{id}/{measureType}/{mid}
 Return the value of {measureType} (e.g. weight) identified by {mid} for person identified by {id}  
 {id} identifier of the person  
-{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi) 
+{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)  
 {mid} unique identifier of the element in the history  
 Response formats: XML, JSON.
 #####Example Request
@@ -435,16 +437,16 @@ HTTP Status: 200
 
 ***
 #### POST /person/{id}/{measureType}
-Save a new value for the {measureType} (e.g. weight) of person identified by {id} and archive the old value in the history
+Save a new value for the {measureType} (e.g. weight) of person identified by {id}  
 {id} identifier of the person  
 {measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)
 Accepted formats: XML, JSON.  
 Response formats: XML, JSON. 
 #####Example Request
 ```
-GET http://127.0.1.1:5700/sdelab/person/57/height/
+POST http://127.0.1.1:5700/sdelab/person/57/height
 ```
-**XML**
+**Body XML**
 ```xml
 <lifestatus>
      <measure>height</measure>
@@ -452,7 +454,7 @@ GET http://127.0.1.1:5700/sdelab/person/57/height/
 </lifestatus>
 ```
 
-**JSON**
+**Body JSON**
 ```json
 {
  "measure": "height",
@@ -515,16 +517,16 @@ HTTP Status: 200
 
 ***
 #### PUT /person/{id}/{measureType}/{mid} 
-Update the value for the {measureType} (e.g., weight) identified by {mid}, related to the person identified by {id}
+Update the value for the {measureType} (e.g., weight) identified by {mid}, related to the person identified by {id}  
 {id} identifier of the person  
-{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)
-{mid} unique identifier of the element in the history
+{measureType} represent the name of the measure (weight, height, steps, blood pressure, heart rate, bmi)  
+{mid} unique identifier of the element in the history  
 Accepted formats: XML, JSON.  
 #####Example Request
 ```
 PUT http://127.0.1.1:5700/sdelab/1/height/12
 ```
-**XML**
+**Body XML**
 ```xml
 <measure>
      <value>90</value>
@@ -532,7 +534,7 @@ PUT http://127.0.1.1:5700/sdelab/1/height/12
 </measure>
 ```
 
-**JSON**
+**Body JSON**
 ```json
 {
  "value": "72",
@@ -555,7 +557,7 @@ Return the history of {measureType} (e.g., weight) for person {id} in the specif
 GET http://127.0.0.1:5700/sdelab/person/4403/weight?before=2015-12-07&after=2011-12-08
 ```
 #####Example Result
-HTTP Status: 200
+HTTP Status: 200  
 **XML**
 ```xml
 <measureHistory>
@@ -596,7 +598,7 @@ retrieves people whose {measureType} (e.g., weight) value is in the [{min},{max}
 {min} start value 
 #####Example Request
 ```
-GET http://127.0.0.1:5700/sdelab/person?measureType=weight&max=100&min=80
+GET http://127.0.0.1:5700/sdelab/person?measureType=weight&max=100&min=50
 ```
 #####Example Result
 HTTP Status: 200  
