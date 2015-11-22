@@ -625,7 +625,7 @@ public class TestClient {
 		else{
 			//sets the server
 			if(args[0].equals("partnerServer"))	
-				uriServer = "https://introsde-server-carlo.herokuapp.com/sdelab/"; //Partner
+				uriServer = "https://enigmatic-sierra-2066.herokuapp.com/sdelab"; //Partner
 			else		
 				uriServer = "https://peaceful-hamlet-5616.herokuapp.com/sdelab"; //My server
 

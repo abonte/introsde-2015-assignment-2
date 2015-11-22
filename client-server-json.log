@@ -1,5 +1,5 @@
      [echo] 'execute.client.partnerServer.json' target has been called
-     [java] Server URL : https://introsde-server-carlo.herokuapp.com/sdelab/
+     [java] Server URL : https://enigmatic-sierra-2066.herokuapp.com/sdelab
      [java] MediaType  : application/json
      [java] ===========================================================================
      [java] Request #1: GET /person Accept: APPLICATION/JSON Content-type: APPLICATION/JSON

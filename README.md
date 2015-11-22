@@ -10,7 +10,7 @@ This repository is the solution to the [second assignment](https://sites.google.
 
 The name of the student with whom I worked: Carlo Nicolò [https://github.com/carlonicolo/introsde-2015-assignment-2](https://github.com/carlonicolo/introsde-2015-assignment-2)  
 URL of my server: [https://peaceful-hamlet-5616.herokuapp.com/sdelab](https://peaceful-hamlet-5616.herokuapp.com/sdelab)  
-URL of my partner server: [https://introsde-server-carlo.herokuapp.com/sdelab/](https://introsde-server-carlo.herokuapp.com/sdelab/)  
+URL of my partner server: [https://enigmatic-sierra-2066.herokuapp.com/sdelab/](https://enigmatic-sierra-2066.herokuapp.com/sdelab/)  
 
 ### Code
 
@@ -25,8 +25,8 @@ URL of my partner server: [https://introsde-server-carlo.herokuapp.com/sdelab/](
 *[src/ehealth/wrapper](src/ehealth/wrapper)*: contains the wrapper used to format XML and JSON;  
 *[src/client](src/client)*: contains the client;  
 *[src/ehealth/App.java](src/ehealth/App.java)*: stand alone server;  
-*[client-server-xml.log](client-server-xml.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using XML format;  
-*[client-server-json.log](client-server-json.log)*: log file of the client calling [partner server](https://introsde-server-carlo.herokuapp.com/sdelab/) using JSON format;  
+*[client-server-xml.log](client-server-xml.log)*: log file of the client calling [partner server](https://enigmatic-sierra-2066.herokuapp.com/sdelab/) using XML format;  
+*[client-server-json.log](client-server-json.log)*: log file of the client calling [partner server](https://enigmatic-sierra-2066.herokuapp.com/sdelab/) using JSON format;  
 *[client-MyServer-json.log](client-MyServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using XML format;  
 *[client-MyServer-json.log](client-MyServer-json.log)*: log file of the client calling [my server](https://peaceful-hamlet-5616.herokuapp.com/sdelab) using JSON format;  
 
